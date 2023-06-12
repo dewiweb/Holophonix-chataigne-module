@@ -1,0 +1,336 @@
+{
+	"name": "Holophonix",
+	"type": "OSC",
+	"path": "Immersive solution",
+	"version": "1.1",
+	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
+    Please visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
+    Chataigne Module specific documentation can be found in the README on GitHub: ","url": "https: //github.com/madees/ADM-OSC-Module",
+	"downloadURL": "https://github.com/madees/ADM-OSC-Module/archive/master.zip",
+	"hasInput": true,
+	"hasOutput": true,
+	"hideDefaultCommands": false,
+	"hideDefaultParameters": [
+		"colorSendMode",
+		"autoRange",
+		"autoFeedback",
+		"pass_through",
+		"input",
+		"outputs",
+		"useHierarchy",
+		"colorSendMode",
+		"booleanSendMode"
+	],
+	"defaults": {
+		"autoAdd": false,
+		"oscInput": {
+			"localPort": 38033
+		},
+		"OSC Outputs": {
+			"OSC Output": {
+				"local": true,
+				"remoteHost": "192.168.1.1",
+				"remotePort": 9001
+			}
+		}
+	},
+	"parameters": {
+		"Objects": {
+			"description": "IDs of objects properties values to receive.\n\n
+			Can be formatted as single Object(ex: 15), range(ex: 8-13) or list(ex: 2,
+			4,
+			12,
+			20)","type": "String"
+		},
+		"Get Sound Objects positions XYZ": {
+			"description": "Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default": false
+		},
+		"Get Sound Objects positions AED": {
+			"description": "Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default": false
+		},
+		"Get Sound Objects gain": {
+			"description": "Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default": false
+		},
+		"Get Rate": {
+			"description": "automatic Get request Rate in milliseconds",
+			"type": "Integer",
+			"default": 1000,
+			"min": 1,
+			"max": 10000
+		}
+	},
+	"scripts": [
+		"Holophonix.js"
+	],
+	"values": {},
+	"commands": {
+		"Create scene": {
+			"callback": "createNewPreset"
+		},
+		"Send azim": {
+			"menu": "Set objects",
+			"callback": "azim",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"Azimuth angle": {
+					"type": "Float",
+					"min": -180,
+					"max": 180
+				}
+			}
+		},
+		"Send elev": {
+			"menu": "Set objects",
+			"callback": "elev",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"Elevation angle": {
+					"type": "Float",
+					"min": -90,
+					"max": 90
+				}
+			}
+		},
+		"Send dist": {
+			"menu": "Set objects",
+			"callback": "dist",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"Distance": {
+					"type": "Float",
+					"min": 0,
+					"max": 1
+				}
+			}
+		},
+		"Send aed": {
+			"menu": "Set objects",
+			"callback": "aed",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"(A,E,D)": {
+					"type": "Point3D",
+					"min": [
+						-180,
+						-90,
+						0
+					],
+					"max": [
+						180,
+						90,
+						1
+					]
+				}
+			}
+		},
+		"Send x": {
+			"menu": "Set objects",
+			"callback": "x",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"x": {
+					"type": "Float",
+					"min": 0,
+					"max": 1
+				}
+			}
+		},
+		"Send y": {
+			"menu": "Set objects",
+			"callback": "y",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"y": {
+					"type": "Float",
+					"min": 0,
+					"max": 1
+				}
+			}
+		},
+		"Send z": {
+			"menu": "Set objects",
+			"callback": "z",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"z": {
+					"type": "Float",
+					"min": 0,
+					"max": 1
+				}
+			}
+		},
+		"Send xyz": {
+			"menu": "Set objects",
+			"callback": "xyz",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"xyz": {
+					"type": "Point3D",
+					"min": [
+						-1,
+						-1,
+						-1
+					],
+					"max": [
+						1,
+						1,
+						1
+					]
+				}
+			}
+		},
+		"Send gain": {
+			"menu": "Set objects",
+			"callback": "gain",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"Gain": {
+					"type": "Float",
+					"min": 0,
+					"max": 1
+				}
+			}
+		},
+		"Get azim": {
+			"menu": "Get objects",
+			"callback": "getAzim",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get elev": {
+			"menu": "Get objects",
+			"callback": "getElev",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get dist": {
+			"menu": "Get objects",
+			"callback": "getDist",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get aed": {
+			"menu": "Get objects",
+			"callback": "getAED",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get x": {
+			"menu": "Get objects",
+			"callback": "getX",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get y": {
+			"menu": "Get objects",
+			"callback": "getY",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get z": {
+			"menu": "Get objects",
+			"callback": "getZ",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get xyz": {
+			"menu": "Get objects",
+			"callback": "getXYZ",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get gain": {
+			"menu": "Get objects",
+			"callback": "getGain",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		}
+	}
+}
