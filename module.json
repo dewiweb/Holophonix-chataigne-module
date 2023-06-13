@@ -36,11 +36,13 @@
 	},
 	"parameters": {
 		"Objects": {
-			"description": "IDs of objects properties values to receive.\n\n
-			Can be formatted as single Object(ex: 15), range(ex: 8-13) or list(ex: 2,
-			4,
-			12,
-			20)","type": "String"
+			"description": "IDs of objects properties values to receive.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
+			"type": "String"
+		},
+		"Rec Mode": {
+			"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
+			"type": "Boolean",
+			"default": true
 		},
 		"Get Sound Objects positions XYZ": {
 			"description": "Update automatically objects container values.\n",
