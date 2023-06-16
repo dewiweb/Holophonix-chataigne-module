@@ -24,7 +24,8 @@ var gainParam = [];
 
 //var updateRate;
 var Objects;
-var nbObjects;
+var objectsList;
+var declaredObjects;
 var lastSendTime = 0;
 var getRate; //in milliseconds
 var option = "initial";
@@ -40,7 +41,7 @@ function init() {
   getObjectsXYZ = local.parameters.getSoundObjectsPositionsXYZ.get();
   getObjectsAED = local.parameters.getSoundObjectsPositionsAED.get();
   getObjectsGain = local.parameters.getSoundObjectsGain.get();
-  nbObjects = local.parameters.objects.get();
+  declaredObjects = local.parameters.objects.get();
   objectsList = [];
 
   // Create the Objects container
@@ -54,6 +55,7 @@ function init() {
  * Callback when a module parameter has changed
  */
 function moduleParameterChanged(param) {
+  script.log("param.name is : " + param.name);
   if (param.isParameter()) {
     //    if (param.is(local.parameters.getUpdateRate)) {
     //      // Get Update Rate parameter has changed
@@ -70,53 +72,82 @@ function moduleParameterChanged(param) {
     if (param.is(local.parameters.recMode)) {
       recMode = local.parameters.recMode.get();
     }
-    if (param.is(local.parameters.objects)) {
-      // Objects list changed.
-      nbObjects = local.parameters.objects.get();
-      objectsList = [];
-      tpObjectsList = nbObjects.split("-");
-      tp2ObjectsList = nbObjects.split(",");
-      if (tpObjectsList.length == 2) {
-        for (i = 0; i < tpObjectsList[tpObjectsList.length - 1]; i++) {
-          objectsList[i] = undefined;
-        }
-        for (
-          i = parseInt(tpObjectsList[0]);
-          i < parseInt(tpObjectsList[1]) + 1;
-          i++
-        ) {
-          objectsList[i] = i;
-        }
-      } else {
-        for (
-          i = 0;
-          i < parseInt(tp2ObjectsList[tp2ObjectsList.length - 1]) + 1;
-          i++
-        ) {
-          objectsList[i] = undefined;
-        }
-        for (i = 0; i < tp2ObjectsList.length; i++) {
-          objectsList[parseInt(tp2ObjectsList[i])] = tp2ObjectsList[i];
-        }
-      }
-      script.log(" objects list: " + JSON.stringify(objectsList));
 
-      createObjectsContainer();
-      createCC();
+    // handling of "get" parameters settings changes
+    if (param.is(local.parameters.getSoundObjectsPositionsXYZ)) {
+      getObjectsXYZ = param.get();
+    }
+    if (param.is(local.parameters.getSoundObjectsPositionsAED)) {
+      getObjectsAED = param.get();
+    }
+    if (param.is(local.parameters.getSoundObjectsGain)) {
+      getObjectsGain = param.get();
     }
   }
-  // handling of "get" parameters settings changes
-  if (param.is(local.parameters.getSoundObjectsPositionsXYZ)) {
-    getObjectsXYZ = param.get();
-  }
-  if (param.is(local.parameters.getSoundObjectsPositionsAED)) {
-    getObjectsAED = param.get();
-  }
-  if (param.is(local.parameters.getSoundObjectsGain)) {
-    getObjectsGain = param.get();
-  }
-  if (param.is(local.parameters.createScene)) {
+  if (param.name == "createGlobalCues") {
+    script.log("createNewPreset Triggered!!");
     createNewPreset();
+  }
+  if (param.name == "addObjects") {
+    // New Objects declared.
+    declaredObjects = local.parameters.objects.get();
+
+    /** Rewrite  */
+    if (declaredObjects.indexOf("-") > -1) {
+      tmpList = declaredObjects.split("-");
+      script.log("tmpList   " + JSON.stringify(tmpList));
+      objectsList[parseInt(tmpList[0])] = parseInt(tmpList[0]);
+      objectsList[parseInt(tmpList[1])] = parseInt(tmpList[1]);
+      for (i = parseInt(tmpList[0]) + 1; i < parseInt(tmpList[1]); i++) {
+        objectsList[i] = i;
+      }
+
+      script.log(" objects list case 1 : " + JSON.stringify(objectsList));
+    } else if (declaredObjects.indexOf(",") > -1) {
+      tmpList1 = declaredObjects.split(",");
+      script.log("tmpList1   " + JSON.stringify(tmpList1));
+      for (i = 0; i < parseInt(tmpList1[tmpList1.length - 1]) + 1; i++) {
+        if (tmpList1.indexOf(i) > -1) {
+          objectsList[i] = i;
+        }
+      }
+      //objectsList[0] = undefined;
+      script.log(" objects list case 2 : " + JSON.stringify(objectsList));
+    } else {
+      objectsList[parseInt(declaredObjects)] = parseInt(declaredObjects);
+      script.log(" objects list case 3 : " + JSON.stringify(objectsList));
+    }
+
+    //      //objectsList = [];
+    //      tpObjectsList = declaredObjects.split("-");
+    //      tp2ObjectsList = declaredObjects.split(",");
+    //      if (tpObjectsList.length == 2) {
+    //        for (i = 0; i < tpObjectsList[tpObjectsList.length - 1]; i++) {
+    //          objectsList[i] = undefined;
+    //        }
+    //        for (
+    //          i = parseInt(tpObjectsList[0]);
+    //          i < parseInt(tpObjectsList[1]) + 1;
+    //          i++
+    //        ) {
+    //          objectsList[i] = i;
+    //        }
+    //      } else {
+    //        for (
+    //          i = 0;
+    //          i < parseInt(tp2ObjectsList[tp2ObjectsList.length - 1]) + 1;
+    //          i++
+    //        ) {
+    //          objectsList[i] = undefined;
+    //        }
+    //        for (i = 0; i < tp2ObjectsList.length; i++) {
+    //          objectsList[parseInt(tp2ObjectsList[i])] = tp2ObjectsList[i];
+    //        }
+    //      }
+
+    createObjectsContainer();
+    createCC();
+    //    }
   }
 }
 
@@ -264,8 +295,15 @@ function update() {
     //      }
     //    }
     if (getObjectsXYZ) {
-      for (i = 0; i < objectsList.length; i++) {
-        if (objectsList[i] !== undefined) {
+      maxObjectID = objectsList[0];
+      for (i = 1; i < objectsList.length; ++i) {
+        if (objectsList[i] > maxID) {
+          maxObjectID = objectsList[i];
+        }
+      }
+
+      for (i = 0; i < maxObjectID + 1; i++) {
+        if (local.values.objectsParameters.xyz.getChild(i) !== null) {
           getXYZ(i);
         }
       }
@@ -327,12 +365,13 @@ function createObjectsContainer(option) {
   //
   // Add XYZ container & values
   xyzContainer = ObjectsContainer.addContainer("xyz");
-  for (i = 0; i < objectsList.length; i++) {
+  for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
     if (objectsList[i] !== undefined) {
       xyzParam[i] = xyzContainer.addPoint3DParameter(i, "xyz", 0, -20, 20);
       xyzParam[i].setAttribute("readonly", true);
     }
   }
+
   xyzContainer.setCollapsed(true);
 
   //  // Add A container & values for polar azimuth
@@ -390,7 +429,7 @@ function createCC(option) {
   existingCCs = root.customVariables.getItems();
   if (option == "initial") {
     // create  New CCs
-    for (i = 0; i < objectsList.length; i++) {
+    for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
       if (objectsList[i] !== undefined) {
         trCC = root.customVariables.addItem();
         trCC.setName("/track/" + i);
@@ -409,9 +448,11 @@ function createCC(option) {
     }
     // create  New CCs
     for (i = 0; i < objectsList.length; i++) {
+      ccIndex = ccsNames.indexOf("_track_" + i);
+      script.log(" CC in CCs index = " + ccIndex + " for i = " + i);
+      script.log("list of existing CCs : " + JSON.stringify(ccsNames));
       if (objectsList[i] !== undefined) {
-        script.log("list of existing CCs : " + JSON.stringify(ccsNames));
-        if (ccsNames.indexOf("_track_" + i) == -1) {
+        if (ccIndex == -1) {
           trCC = root.customVariables.addItem();
           trCC.setName("/track/" + i);
           trCCxyz = trCC.variables.addItem("Point3D Parameter");
@@ -424,18 +465,38 @@ function createCC(option) {
       }
     }
   }
+  root.customVariables.reorderItems();
 }
 
 function createNewPreset() {
-  for (i = 0; i < objectsList.length; i++) {
-    if (objectsList[i] !== undefined) {
+  cuesNames = local.parameters.globalCuesName.get();
+  script.log("createNewPreset Triggered!!");
+  ccsIDs = [];
+  ccs = root.customVariables.getItems();
+  for (var j = 0; j < ccs.length; j++) {
+    ccsIDs.push(parseInt(ccs[j].name.split("_")[2]));
+  }
+  maxID = ccsIDs[0];
+  for (i = 1; i < ccsIDs.length; ++i) {
+    if (ccsIDs[i] > maxID) {
+      maxID = ccsIDs[i];
+    }
+  }
+  script.log("ccs Max ID : " + maxID);
+
+  for (i = 0; i < maxID + 1; i++) {
+    if (ccsIDs.contains(i)) {
       cuesLength = root.customVariables
         .getItemWithName("_track_" + i)
         .presets.getItems().length;
       iCC = root.customVariables
         .getItemWithName("_track_" + i)
         .presets.addItem("String");
-      iCC.setName("Cue" + (cuesLength + 1));
+      if (cuesNames !== "") {
+        iCC.setName(cuesNames);
+      } else {
+        iCC.setName("Cue" + (cuesLength + 1));
+      }
     }
   }
 }
@@ -656,3 +717,5 @@ function createParamReferenceTo(toValue, fromParam) {
     ],
   });
 }
+
+//root.customVariables._track_5

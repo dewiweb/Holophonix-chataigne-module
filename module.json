@@ -39,6 +39,9 @@
 			"description": "IDs of objects properties values to receive.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
 			"type": "String"
 		},
+		"Add Objects": {
+			"type": "Trigger"
+		},
 		"Rec Mode": {
 			"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
 			"type": "Boolean",
@@ -65,6 +68,13 @@
 			"default": 1000,
 			"min": 1,
 			"max": 10000
+		},
+		"Create Global Cues": {
+			"type": "Trigger"
+		},
+		"Global Cues Name": {
+			"description": "Set a specific Name",
+			"type": "String"
 		}
 	},
 	"scripts": [
@@ -72,9 +82,6 @@
 	],
 	"values": {},
 	"commands": {
-		"Create scene": {
-			"callback": "createNewPreset"
-		},
 		"Send azim": {
 			"menu": "Set objects",
 			"callback": "azim",
@@ -207,14 +214,14 @@
 				"xyz": {
 					"type": "Point3D",
 					"min": [
-						-1,
-						-1,
-						-1
+						-20,
+						-20,
+						-20
 					],
 					"max": [
-						1,
-						1,
-						1
+						20,
+						20,
+						20
 					]
 				}
 			}
