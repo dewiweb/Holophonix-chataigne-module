@@ -22,77 +22,78 @@ var dParam = [];
 var aedParam = [];
 var gainParam = [];
 
-//var updateRate;
-var Objects;
-var objectsList;
+var objectsList = [];
 var declaredObjects;
 var lastSendTime = 0;
-var getRate; //in milliseconds
+var requestSendRate; //in milliseconds
 var option = "initial";
-var recMode = local.parameters.recMode.get();
+var recMode = local.parameters.recordCues.recMode.get();
+
 /**
  * Module intialisation
  */
 function init() {
   // Setup default reception update rate and get update states as in module GUI
-  //updateRate = local.parameters.getUpdateRate.get();
-  getRate = local.parameters.getRate.get();
+  requestSendRate = local.parameters.requestValues.autoRequestRate.get();
   script.setUpdateRate(5000);
-  getObjectsXYZ = local.parameters.getSoundObjectsPositionsXYZ.get();
-  getObjectsAED = local.parameters.getSoundObjectsPositionsAED.get();
-  getObjectsGain = local.parameters.getSoundObjectsGain.get();
-  declaredObjects = local.parameters.objects.get();
-  objectsList = [];
-
-  // Create the Objects container
-  //createObjectsContainer();
-  //createCC("initial");
-
+  getObjectsXYZ = local.parameters.requestValues.autoXYZPositionsRequest.get();
+  //  getObjectsAED = local.parameters.getObjectsPositionsAED.get();
+  //getObjectsGain = local.parameters.getObjectsGain.get();
+  declaredObjects = local.parameters.objects.objectsIDs.get();
+  updateObjectsList();
   // Module GUI settings
   local.scripts.setCollapsed(true);
+  if (root.states.getChild("XYZ states") == undefined) {
+    XYZstates = root.states.addItem();
+    XYZstates.setName("XYZ states");
+  }
+  root.states.xyzStates.active.set(false);
+  //root.states.xyzStates.processors.mapping.enabled;
 }
+
 /**
  * Callback when a module parameter has changed
  */
 function moduleParameterChanged(param) {
   script.log("param.name is : " + param.name);
   if (param.isParameter()) {
-    //    if (param.is(local.parameters.getUpdateRate)) {
-    //      // Get Update Rate parameter has changed
-    //      updateRate = local.parameters.getUpdateRate.get();
-    //      sendRate = local.parameters.sendRate.get();
-    //      script.setUpdateRate(updateRate);
-    //    }
-    if (param.is(local.parameters.getRate)) {
+    if (param.is(local.parameters.requestValues.autoRequestRate)) {
       // Get send Rate parameter has changed
-      //      updateRate = local.parameters.getUpdateRate.get();
-      getRate = local.parameters.getRate.get();
+      requestSendRate = local.parameters.requestValues.autoRequestRate.get();
       script.setUpdateRate(5000);
     }
-    if (param.is(local.parameters.recMode)) {
-      recMode = local.parameters.recMode.get();
+    if (param.is(local.parameters.recordCues.recMode)) {
+      recMode = local.parameters.recordCues.recMode.get();
+      script.log("recMode changed to : " + recMode);
+      if (recMode == 0) {
+        local.parameters.oscInput.enabled.set(false);
+        root.states.xyzStates.active.set(true);
+      } else {
+        local.parameters.oscInput.enabled.set(true);
+        root.states.xyzStates.active.set(false);
+      }
+      script.log("oscInput  : " + local.parameters.oscInput.enabled);
     }
-
     // handling of "get" parameters settings changes
-    if (param.is(local.parameters.getSoundObjectsPositionsXYZ)) {
+    if (param.is(local.parameters.requestValues.autoXYZPositionsRequest)) {
       getObjectsXYZ = param.get();
     }
-    if (param.is(local.parameters.getSoundObjectsPositionsAED)) {
-      getObjectsAED = param.get();
-    }
-    if (param.is(local.parameters.getSoundObjectsGain)) {
-      getObjectsGain = param.get();
-    }
+
+    //    if (param.is(local.parameters.getObjectsPositionsAED)) {
+    //      getObjectsAED = param.get();
+    //    }
+    //    if (param.is(local.parameters.getObjectsGain)) {
+    //      getObjectsGain = param.get();
+    //    }
   }
-  if (param.name == "createGlobalCues") {
+
+  if (param.is(local.parameters.recordCues.createGlobalCues)) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
   }
   if (param.name == "addObjects") {
     // New Objects declared.
-    declaredObjects = local.parameters.objects.get();
-
-    /** Rewrite  */
+    declaredObjects = local.parameters.objects.objectsIDs.get();
     if (declaredObjects.indexOf("-") > -1) {
       tmpList = declaredObjects.split("-");
       script.log("tmpList   " + JSON.stringify(tmpList));
@@ -111,43 +112,29 @@ function moduleParameterChanged(param) {
           objectsList[i] = i;
         }
       }
-      //objectsList[0] = undefined;
       script.log(" objects list case 2 : " + JSON.stringify(objectsList));
     } else {
       objectsList[parseInt(declaredObjects)] = parseInt(declaredObjects);
       script.log(" objects list case 3 : " + JSON.stringify(objectsList));
     }
 
-    //      //objectsList = [];
-    //      tpObjectsList = declaredObjects.split("-");
-    //      tp2ObjectsList = declaredObjects.split(",");
-    //      if (tpObjectsList.length == 2) {
-    //        for (i = 0; i < tpObjectsList[tpObjectsList.length - 1]; i++) {
-    //          objectsList[i] = undefined;
-    //        }
-    //        for (
-    //          i = parseInt(tpObjectsList[0]);
-    //          i < parseInt(tpObjectsList[1]) + 1;
-    //          i++
-    //        ) {
-    //          objectsList[i] = i;
-    //        }
-    //      } else {
-    //        for (
-    //          i = 0;
-    //          i < parseInt(tp2ObjectsList[tp2ObjectsList.length - 1]) + 1;
-    //          i++
-    //        ) {
-    //          objectsList[i] = undefined;
-    //        }
-    //        for (i = 0; i < tp2ObjectsList.length; i++) {
-    //          objectsList[parseInt(tp2ObjectsList[i])] = tp2ObjectsList[i];
-    //        }
-    //      }
-
     createObjectsContainer();
     createCC();
-    //    }
+  }
+  if (param.name == "manualXYZPositionsRequest") {
+    updateObjectsList();
+    maxObjectID = objectsList[0];
+    for (i = 1; i < objectsList.length; ++i) {
+      if (objectsList[i] > maxID) {
+        maxObjectID = objectsList[i];
+      }
+    }
+
+    for (i = 0; i < maxObjectID + 1; i++) {
+      if (local.values.objectsParameters.xyz.getChild(i) !== null) {
+        getXYZ(i);
+      }
+    }
   }
 }
 
@@ -283,7 +270,7 @@ function oscEvent(address, args) {
  */
 function update() {
   var t = util.getTime();
-  if (t > lastSendTime + getRate / 1000) {
+  if (t > lastSendTime + requestSendRate / 1000) {
     //send
 
     // Sends commands to retreive values, at specified updateRate.
@@ -461,6 +448,74 @@ function createCC(option) {
             "/modules/holophonix/values/objectsParameters/xyz/" + i,
             "/customVariables/_track_" + i + "/variables/_xyz/_xyz"
           );
+          ObjectState = root.states.xyzStates.processors.addItem("Mapping");
+          ObjectState.setName("/track/" + i);
+          ObjectState.loadJSONData({
+            niceName: "/track/" + i,
+            editorIsCollapsed: true,
+            type: "Mapping",
+            im: {
+              items: [
+                {
+                  parameters: [
+                    {
+                      value:
+                        "/customVariables/customVariables/values/_track_" +
+                        i +
+                        "/_xyz",
+                      controlAddress: "/inputValue",
+                    },
+                  ],
+                  niceName: "Input Value",
+                  type: "Input Value",
+                },
+              ],
+              viewOffset: [0, 0],
+              viewZoom: 1.0,
+            },
+            params: {
+              parameters: [
+                {
+                  value: 50,
+                  hexMode: false,
+                  controlAddress: "/updateRate",
+                },
+              ],
+              editorIsCollapsed: true,
+            },
+            filters: { viewOffset: [0, 0], viewZoom: 1.0 },
+            outputs: {
+              items: [
+                {
+                  niceName: "MappingOutput",
+                  type: "BaseItem",
+                  commandModule: "holophonix",
+                  commandPath: "Set objects",
+                  commandType: "Send xyz",
+                  command: {
+                    parameters: [
+                      {
+                        value: i,
+                        hexMode: false,
+                        controlAddress: "/sourceIndex",
+                      },
+                    ],
+                    paramLinks: {},
+                  },
+                },
+              ],
+              viewOffset: [0, 0],
+              viewZoom: 1.0,
+            },
+          });
+          //OSinput = ObjectState.inputs.addItem("Input Value");
+
+          //ObjectState.setName("test");
+          //ObjectState.setAttribute("type", "Mapping");
+          //ObjectState.setName("/track/" + i);
+          //root.states.xyzStates.processors.processor.enabled;
+          //root.states.xyzStates.processors.mapping.enabled;
+          //root.states.xyzStates.processors.action.enabled;
         }
       }
     }
@@ -469,7 +524,7 @@ function createCC(option) {
 }
 
 function createNewPreset() {
-  cuesNames = local.parameters.globalCuesName.get();
+  cuesNames = local.parameters.recordCues.globalCuesName.get();
   script.log("createNewPreset Triggered!!");
   ccsIDs = [];
   ccs = root.customVariables.getItems();
@@ -505,6 +560,7 @@ function createNewPreset() {
 // * Callback functions for module commands
 //
 ///**
+
 // * azim	: Send azimuth of sound location.
 // * 1 int [1, 128] object index
 // * 2 float [-180, 180] in degrees. -90 is on the Right, 0 is in front.
@@ -716,6 +772,16 @@ function createParamReferenceTo(toValue, fromParam) {
       },
     ],
   });
+}
+
+function updateObjectsList() {
+  for (i = 0; i < 129; i++) {
+    if (local.values.objectsParameters.xyz) {
+      if (local.values.objectsParameters.xyz.getChild(i)) {
+        objectsList[i] = i;
+      }
+    }
+  }
 }
 
 //root.customVariables._track_5

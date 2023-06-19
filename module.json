@@ -1,12 +1,11 @@
 {
 	"name": "Holophonix",
 	"type": "OSC",
-	"path": "Immersive solution",
-	"version": "1.1",
-	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
-    Please visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
-    Chataigne Module specific documentation can be found in the README on GitHub: ","url": "https: //github.com/madees/ADM-OSC-Module",
-	"downloadURL": "https://github.com/madees/ADM-OSC-Module/archive/master.zip",
+	"path": "Spatial Audio",
+	"version": "1.0",
+	"description": "Chataigne Module specific documentation can be found in the README on GitHub: ",
+	"url": "https://github.com/dewiweb/Holophonix_chataigne_module",
+	"downloadURL": "https://github.com/dewiweb/Holophonix_chataigne_module",
 	"hasInput": true,
 	"hasOutput": true,
 	"hideDefaultCommands": false,
@@ -36,45 +35,50 @@
 	},
 	"parameters": {
 		"Objects": {
-			"description": "IDs of objects properties values to receive.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
-			"type": "String"
+			"type": "Container",
+			"Objects IDs": {
+				"description": "IDs of objects to add.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
+				"type": "String"
+			},
+			"Add Objects": {
+				"type": "Trigger"
+			}
 		},
-		"Add Objects": {
-			"type": "Trigger"
+		"Request Values": {
+			"type": "Container",
+			"Manual XYZ positions Request": {
+				"type": "Trigger"
+			},
+			"Auto XYZ positions Request": {
+				"description": "Update automatically objects container values.\n",
+				"type": "Boolean",
+				"default": false
+			},
+			" Auto Request Rate": {
+				"description": "automatic Get request Rate in milliseconds",
+				"type": "Integer",
+				"default": 1000,
+				"min": 1,
+				"max": 10000
+			}
 		},
-		"Rec Mode": {
-			"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
-			"type": "Boolean",
-			"default": true
-		},
-		"Get Sound Objects positions XYZ": {
-			"description": "Update automatically objects container values.\n",
-			"type": "Boolean",
-			"default": false
-		},
-		"Get Sound Objects positions AED": {
-			"description": "Update automatically objects container values.\n",
-			"type": "Boolean",
-			"default": false
-		},
-		"Get Sound Objects gain": {
-			"description": "Update automatically objects container values.\n",
-			"type": "Boolean",
-			"default": false
-		},
-		"Get Rate": {
-			"description": "automatic Get request Rate in milliseconds",
-			"type": "Integer",
-			"default": 1000,
-			"min": 1,
-			"max": 10000
-		},
-		"Create Global Cues": {
-			"type": "Trigger"
-		},
-		"Global Cues Name": {
-			"description": "Set a specific Name",
-			"type": "String"
+		"Record Cues": {
+			"type": "Container",
+			"Rec Mode": {
+				"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
+				"type": "Boolean",
+				"default": true
+			},
+			"Create Global Cues": {
+				"type": "Trigger"
+			},
+			"Global Cues Name": {
+				"description": "Set a specific Name",
+				"type": "String"
+			},
+			"Reload Cue": {
+				"type": "Enum"
+			}
 		}
 	},
 	"scripts": [
@@ -126,7 +130,7 @@
 				"Distance": {
 					"type": "Float",
 					"min": 0,
-					"max": 1
+					"max": 20
 				}
 			}
 		},
@@ -149,7 +153,7 @@
 					"max": [
 						180,
 						90,
-						1
+						20
 					]
 				}
 			}
@@ -165,8 +169,8 @@
 				},
 				"x": {
 					"type": "Float",
-					"min": 0,
-					"max": 1
+					"min": -20,
+					"max": 20
 				}
 			}
 		},
@@ -181,8 +185,8 @@
 				},
 				"y": {
 					"type": "Float",
-					"min": 0,
-					"max": 1
+					"min": -20,
+					"max": 20
 				}
 			}
 		},
@@ -197,8 +201,8 @@
 				},
 				"z": {
 					"type": "Float",
-					"min": 0,
-					"max": 1
+					"min": -20,
+					"max": 20
 				}
 			}
 		},
