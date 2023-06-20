@@ -6,12 +6,6 @@ To install the Custom Module, download and unzip the files to your Documents/Cha
 
 ## Principle of use
 
-First set IP's and ports in /modules/adm_osc/parameters.
-
-The objects container receives values from ADM-OSC thirds.
-Select the number of objects to store in values container with /modules/adm_osc/parameters/numberOfObjects.
-They are organised to ease multiplex mappings : you can automatically build list with "Fill...">"from Container" feature.
-
 You can automatically send "get" commands to the third within modules parameters :
 
 - /modules/adm_osc/parameters/getSoundObjectsPositionsXYZ : for (x,y,z) cartesian objects coordinates
