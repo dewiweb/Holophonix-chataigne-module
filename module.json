@@ -49,7 +49,23 @@
 			"Manual XYZ positions Request": {
 				"type": "Trigger"
 			},
+			"Manual AED positions Request": {
+				"type": "Trigger"
+			},
+			"Manual Gain Request": {
+				"type": "Trigger"
+			},
 			"Auto XYZ positions Request": {
+				"description": "Update automatically objects container values.\n",
+				"type": "Boolean",
+				"default": false
+			},
+			"Auto AED positions Request": {
+				"description": "Update automatically objects container values.\n",
+				"type": "Boolean",
+				"default": false
+			},
+			"Auto Gain Request": {
 				"description": "Update automatically objects container values.\n",
 				"type": "Boolean",
 				"default": false
@@ -86,126 +102,6 @@
 	],
 	"values": {},
 	"commands": {
-		"Send azim": {
-			"menu": "Set objects",
-			"callback": "azim",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"Azimuth angle": {
-					"type": "Float",
-					"min": -180,
-					"max": 180
-				}
-			}
-		},
-		"Send elev": {
-			"menu": "Set objects",
-			"callback": "elev",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"Elevation angle": {
-					"type": "Float",
-					"min": -90,
-					"max": 90
-				}
-			}
-		},
-		"Send dist": {
-			"menu": "Set objects",
-			"callback": "dist",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"Distance": {
-					"type": "Float",
-					"min": 0,
-					"max": 20
-				}
-			}
-		},
-		"Send aed": {
-			"menu": "Set objects",
-			"callback": "aed",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"(A,E,D)": {
-					"type": "Point3D",
-					"min": [
-						-180,
-						-90,
-						0
-					],
-					"max": [
-						180,
-						90,
-						20
-					]
-				}
-			}
-		},
-		"Send x": {
-			"menu": "Set objects",
-			"callback": "x",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"x": {
-					"type": "Float",
-					"min": -20,
-					"max": 20
-				}
-			}
-		},
-		"Send y": {
-			"menu": "Set objects",
-			"callback": "y",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"y": {
-					"type": "Float",
-					"min": -20,
-					"max": 20
-				}
-			}
-		},
-		"Send z": {
-			"menu": "Set objects",
-			"callback": "z",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				},
-				"z": {
-					"type": "Float",
-					"min": -20,
-					"max": 20
-				}
-			}
-		},
 		"Send xyz": {
 			"menu": "Set objects",
 			"callback": "xyz",
@@ -230,6 +126,30 @@
 				}
 			}
 		},
+		"Send aed": {
+			"menu": "Set objects",
+			"callback": "aed",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"aed": {
+					"type": "Point3D",
+					"min": [
+						-180,
+						-90,
+						0
+					],
+					"max": [
+						180,
+						90,
+						20
+					]
+				}
+			}
+		},
 		"Send gain": {
 			"menu": "Set objects",
 			"callback": "gain",
@@ -239,38 +159,16 @@
 					"min": 1,
 					"max": 128
 				},
-				"Gain": {
+				"gain": {
 					"type": "Float",
-					"min": 0,
-					"max": 1
+					"min": -60,
+					"max": 12
 				}
 			}
 		},
-		"Get azim": {
+		"Get xyz": {
 			"menu": "Get objects",
-			"callback": "getAzim",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get elev": {
-			"menu": "Get objects",
-			"callback": "getElev",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get dist": {
-			"menu": "Get objects",
-			"callback": "getDist",
+			"callback": "getXYZ",
 			"parameters": {
 				"Source index": {
 					"type": "Integer",
@@ -282,50 +180,6 @@
 		"Get aed": {
 			"menu": "Get objects",
 			"callback": "getAED",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get x": {
-			"menu": "Get objects",
-			"callback": "getX",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get y": {
-			"menu": "Get objects",
-			"callback": "getY",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get z": {
-			"menu": "Get objects",
-			"callback": "getZ",
-			"parameters": {
-				"Source index": {
-					"type": "Integer",
-					"min": 1,
-					"max": 128
-				}
-			}
-		},
-		"Get xyz": {
-			"menu": "Get objects",
-			"callback": "getXYZ",
 			"parameters": {
 				"Source index": {
 					"type": "Integer",
