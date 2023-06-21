@@ -41,19 +41,98 @@ function init() {
   //Add States to state machine
   if (root.states.getChild("XYZ states") == undefined) {
     XYZstates = root.states.addItem();
-    XYZstates.setName("XYZ states");
+    XYZstates.loadJSONData({
+      parameters: [
+        {
+          value: [-500.0, 0.0],
+          controlAddress: "/viewUIPosition",
+        },
+        {
+          value: false,
+          controlAddress: "/active",
+        },
+      ],
+      niceName: "XYZ states",
+      type: "State",
+      processors: {
+        viewOffset: [0, 0],
+        viewZoom: 1.0,
+      },
+    });
   }
   root.states.xyzStates.active.set(false);
+
   if (root.states.getChild("AED states") == undefined) {
     AEDstates = root.states.addItem();
-    AEDstates.setName("AED states");
+    AEDstates.loadJSONData({
+      parameters: [
+        {
+          value: [-250.0, 0.0],
+          controlAddress: "/viewUIPosition",
+        },
+        {
+          value: false,
+          controlAddress: "/active",
+        },
+      ],
+      niceName: "AED states",
+      type: "State",
+      processors: {
+        viewOffset: [0, 0],
+        viewZoom: 1.0,
+      },
+    });
   }
   root.states.aedStates.active.set(false);
+
   if (root.states.getChild("Gain states") == undefined) {
     gainStates = root.states.addItem();
-    gainStates.setName("Gain states");
+    gainStates.loadJSONData({
+      parameters: [
+        {
+          value: [0.0, 0.0],
+          controlAddress: "/viewUIPosition",
+        },
+        {
+          value: false,
+          controlAddress: "/active",
+        },
+      ],
+      niceName: "Gain states",
+      type: "State",
+      processors: {
+        viewOffset: [0, 0],
+        viewZoom: 1.0,
+      },
+    });
   }
   root.states.gainStates.active.set(false);
+  if (root.states.getChild("Cue Triggers") == undefined) {
+    cueTriggers = root.states.addItem();
+    cueTriggers.loadJSONData({
+      parameters: [
+        {
+          value: [-500.0, 250.0],
+          controlAddress: "/viewUIPosition",
+        },
+        {
+          value: [750.0, 150.0],
+          controlAddress: "/viewUISize",
+        },
+        {
+          value: true,
+          controlAddress: "/active",
+        },
+      ],
+      niceName: "Cue Triggers",
+      type: "State",
+      processors: {
+        viewOffset: [0, 0],
+        viewZoom: 1.0,
+      },
+    });
+  }
+  root.states.cueTriggers.active.set(false);
 }
 
 /**
@@ -629,6 +708,9 @@ function createCC(option) {
 
 function createNewPreset() {
   cuesNames = local.parameters.recordCues.globalCuesName.get();
+  cueName;
+  cuesLength;
+  cueTrigger = root.states.cueTriggers.processors.addItem("Action");
   script.log("createNewPreset Triggered!!");
   ccsIDs = [];
   ccs = root.customVariables.getItems();
@@ -651,11 +733,116 @@ function createNewPreset() {
       iCC = root.customVariables
         .getItemWithName("_track_" + i)
         .presets.addItem("String");
+
       if (cuesNames !== "") {
+        cueName = cuesNames;
         iCC.setName(cuesNames);
       } else {
+        cueName = "Cue" + (cuesLength + 1);
         iCC.setName("Cue" + (cuesLength + 1));
       }
+      cueTrigger.setName(cueName);
+      actionName = "/_track_" + i + "/presets/" + cueName;
+      triggerConsequence = root.states.cueTriggers.processors
+        .getItemWithName(cueName)
+        .consequencesTRUE.addItem("Consequence");
+      triggerConsequence.loadJSONData({
+        niceName: "track " + i,
+        type: "Consequence",
+        commandModule: "customVariables",
+        commandPath: "",
+        commandType: "Go to preset",
+        command: {
+          parameters: [
+            {
+              value: "/_track_" + i + "/presets/" + cueName,
+              controlAddress: "/targetPreset",
+            },
+            {
+              value: 5.0,
+              controlAddress: "/interpolationTime",
+              enabled: true,
+            },
+          ],
+          containers: {
+            interpolationCurve: {
+              parameters: [
+                {
+                  value: 1.0,
+                  controlAddress: "/length",
+                },
+                {
+                  value: [0.0, 1.0],
+                  controlAddress: "/viewValueRange",
+                },
+                {
+                  value: [0.0, 1.0],
+                  controlAddress: "/range",
+                  enabled: true,
+                },
+                {
+                  value: false,
+                  controlAddress: "/enabled",
+                },
+              ],
+              editorIsCollapsed: true,
+              hideInRemoteControl: false,
+              items: [
+                {
+                  parameters: [
+                    {
+                      value: "Bezier",
+                      controlAddress: "/easingType",
+                    },
+                  ],
+                  niceName: "Key",
+                  containers: {
+                    easing: {
+                      parameters: [
+                        {
+                          value: [0.300000011920929, 0.0],
+                          controlAddress: "/anchor1",
+                        },
+                        {
+                          value: [-0.300000011920929, 0.0],
+                          controlAddress: "/anchor2",
+                        },
+                      ],
+                    },
+                  },
+                  type: "Key",
+                },
+                {
+                  parameters: [
+                    {
+                      value: 1.0,
+                      controlAddress: "/position",
+                    },
+                    {
+                      value: 1.0,
+                      controlAddress: "/value",
+                    },
+                    {
+                      value: "Bezier",
+                      controlAddress: "/easingType",
+                    },
+                  ],
+                  niceName: "Key 1",
+                  containers: {
+                    easing: {},
+                  },
+                  type: "Key",
+                },
+              ],
+              viewOffset: [0, 0],
+              viewZoom: 1.0,
+              owned: true,
+              niceName: "Interpolation Curve",
+            },
+          },
+          paramLinks: {},
+        },
+      });
     }
   }
 }
