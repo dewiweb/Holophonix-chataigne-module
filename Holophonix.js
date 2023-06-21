@@ -205,21 +205,72 @@ function oscEvent(address, args) {
   // Parse address
   if (address[1] == "track") {
     var objectID = parseInt(address[2]);
-    if (objectsList.indexOf(objectID) == -1) {
-      script.logWarning("Received not handled object number #" + objectID);
-      return;
-    }
-    if (address[3] == "xyz") {
-      local.values.objectsParameters.xyz.getChild(objectID).set(args);
-    }
-    if (address[3] == "aed") {
-      local.values.objectsParameters.aed.getChild(objectID).set(args);
-    }
-    if (address[3] == "gain") {
-      script.log(
-        "gain value : " + args + " received for track n° : " + objectID
-      );
-      local.values.objectsParameters.gain.getChild(objectID).set(args[0]);
+    if (objectsList !== undefined) {
+      if (objectsList.indexOf(objectID) == -1) {
+        script.logWarning("Received not handled object number #" + objectID);
+        return;
+      }
+
+      if (address[3] == "xyz") {
+        local.values.objectsParameters.xyz.getChild(objectID).set(args);
+      }
+      if (address[3] == "x") {
+        previousXYZ = local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .set(args[0], previousXYZ[1], previousXYZ[2]);
+      }
+      if (address[3] == "y") {
+        previousXYZ = local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .set(previousXYZ[0], args[0], previousXYZ[2]);
+      }
+      if (address[3] == "z") {
+        previousXYZ = local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.xyz
+          .getChild(objectID)
+          .set(previousXYZ[0], previousXYZ[1], args[0]);
+      }
+      if (address[3] == "aed") {
+        local.values.objectsParameters.aed.getChild(objectID).set(args);
+      }
+      if (address[3] == "azim") {
+        previousAED = local.values.objectsParameters.aed
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.aed
+          .getChild(objectID)
+          .set(args[0], previousAED[1], previousAED[2]);
+      }
+      if (address[3] == "elev") {
+        previousAED = local.values.objectsParameters.aed
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.aed
+          .getChild(objectID)
+          .set(previousAED[0], args[0], previousAED[2]);
+      }
+      if (address[3] == "dist") {
+        previousAED = local.values.objectsParameters.aed
+          .getChild(objectID)
+          .get();
+        local.values.objectsParameters.aed
+          .getChild(objectID)
+          .set(previousAED[0], previousAED[1], args[0]);
+      }
+      if (address[3] == "gain") {
+        script.log(
+          "gain value : " + args + " received for track n° : " + objectID
+        );
+        local.values.objectsParameters.gain.getChild(objectID).set(args[0]);
+      }
     }
   }
 }
@@ -232,6 +283,7 @@ function update() {
   if (t > lastSendTime + requestSendRate / 1000) {
     // Sends commands to retreive values, at specified updateRate.
     if (getObjectsXYZ) {
+      updateObjectsList();
       maxObjectID = objectsList[0];
       for (i = 1; i < objectsList.length; ++i) {
         if (objectsList[i] > maxID) {
@@ -246,6 +298,7 @@ function update() {
       }
     }
     if (getObjectsAED) {
+      updateObjectsList();
       maxObjectID = objectsList[0];
       for (i = 1; i < objectsList.length; ++i) {
         if (objectsList[i] > maxID) {
@@ -260,6 +313,7 @@ function update() {
       }
     }
     if (getObjectsGain) {
+      updateObjectsList();
       maxObjectID = objectsList[0];
       for (i = 1; i < objectsList.length; ++i) {
         if (objectsList[i] > maxID) {
