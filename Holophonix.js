@@ -411,9 +411,7 @@ function update() {
   }
 }
 
-/**
- * Reset the objects container depending on Number of objects module parameter
- */
+//** Create objects container */
 function createObjectsContainer(option) {
   if (local.values.objectsParameters == undefined) {
     ObjectsContainer = local.values.addContainer("Objects parameters");
@@ -421,7 +419,7 @@ function createObjectsContainer(option) {
     ObjectsContainer = local.values.objectsParameters;
   }
 
-  // Add XYZ container & values
+  //** Add XYZ container & values */
   xyzContainer = ObjectsContainer.addContainer("xyz");
   for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
     if (objectsList[i] !== undefined) {
@@ -431,7 +429,7 @@ function createObjectsContainer(option) {
   }
   xyzContainer.setCollapsed(true);
 
-  // Add AED container & values
+  //** Add AED container & values */
   aedContainer = ObjectsContainer.addContainer("aed");
   for (i = 0; i < objectsList.length; i++) {
     if (objectsList[i] !== undefined) {
@@ -441,7 +439,7 @@ function createObjectsContainer(option) {
   }
   aedContainer.setCollapsed(true);
 
-  // Add gain container & values
+  //** Add gain container & values */
   gainContainer = ObjectsContainer.addContainer("gain");
   for (i = 0; i < objectsList.length; i++) {
     if (objectsList[i] !== undefined) {
@@ -452,10 +450,10 @@ function createObjectsContainer(option) {
   gainContainer.setCollapsed(true);
 }
 
+//** Create New Custom Variable based on declared Object  */
 function createCC(option) {
   existingCCs = root.customVariables.getItems();
   if (option == "initial") {
-    // create  New CCs
     for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
       if (objectsList[i] !== undefined) {
         trCC = root.customVariables.addItem();
@@ -470,14 +468,13 @@ function createCC(option) {
     }
     option = "";
   } else {
-    // Delete Old CCs
     ccsNames = [];
     ccs = root.customVariables.getItems();
     for (var j = 0; j < ccs.length; j++) {
       ccsNames.push(ccs[j].name);
       //      root.customVariables.removeItem(ccs[j].name);
     }
-    // create  New CCs
+
     for (i = 0; i < objectsList.length; i++) {
       ccIndex = ccsNames.indexOf("_track_" + i);
       script.log(" CC in CCs index = " + ccIndex + " for i = " + i);
@@ -492,6 +489,7 @@ function createCC(option) {
             "/modules/holophonix/values/objectsParameters/xyz/" + i,
             "/customVariables/_track_" + i + "/variables/_xyz/_xyz"
           );
+          //** Add corresponding mappings to states * /
           ObjectStateXYZ = root.states.xyzStates.processors.addItem("Mapping");
           ObjectStateXYZ.setName("/track/" + i);
           ObjectStateXYZ.loadJSONData({
@@ -706,6 +704,7 @@ function createCC(option) {
   }
 }
 
+//* Create a new preset */
 function createNewPreset() {
   cuesNames = local.parameters.recordCues.globalCuesName.get();
   cueName;
@@ -743,6 +742,7 @@ function createNewPreset() {
       }
       cueTrigger.setName(cueName);
       actionName = "/_track_" + i + "/presets/" + cueName;
+      //**Add a Trigger to load created preset
       triggerConsequence = root.states.cueTriggers.processors
         .getItemWithName(cueName)
         .consequencesTRUE.addItem("Consequence");
@@ -847,10 +847,9 @@ function createNewPreset() {
   }
 }
 
-///**
-// * Callback functions for module commands
-//
-///**
+//**
+//* Callback functions for module commands
+//**
 
 /**
  * aed	: Send spheric coordinate of sound location.
