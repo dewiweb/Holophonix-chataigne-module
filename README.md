@@ -1,6 +1,6 @@
 # Holophonix-Chataigne-Module
 
-Chataigne
+A Chataigne's Module to interact with [Holophonix](https://holophonix.xyz) spatial audio processor
 
 ## Installation
 
