@@ -48,6 +48,12 @@ function init() {
           controlAddress: "/viewUIPosition",
         },
         {
+          value: [
+            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+          ],
+          controlAddress: "/color",
+        },
+        {
           value: false,
           controlAddress: "/active",
         },
@@ -69,6 +75,12 @@ function init() {
         {
           value: [-250.0, 0.0],
           controlAddress: "/viewUIPosition",
+        },
+        {
+          value: [
+            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+          ],
+          controlAddress: "/color",
         },
         {
           value: false,
@@ -94,6 +106,12 @@ function init() {
           controlAddress: "/viewUIPosition",
         },
         {
+          value: [
+            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+          ],
+          controlAddress: "/color",
+        },
+        {
           value: false,
           controlAddress: "/active",
         },
@@ -114,6 +132,12 @@ function init() {
         {
           value: [-500.0, 250.0],
           controlAddress: "/viewUIPosition",
+        },
+        {
+          value: [
+            0.6431372761726379, 0.2784313857555389, 0.5137255191802979, 1.0,
+          ],
+          controlAddress: "/color",
         },
         {
           value: [750.0, 150.0],
@@ -252,6 +276,9 @@ function moduleParameterChanged(param) {
         getGain(i);
       }
     }
+  }
+  if (param.name == "reloadCue") {
+    root.states.cueTriggers.processors.cue1.consequencesTRUE.trigger;
   }
 }
 
@@ -740,6 +767,7 @@ function createNewPreset() {
         cueName = "Cue" + (cuesLength + 1);
         iCC.setName("Cue" + (cuesLength + 1));
       }
+
       cueTrigger.setName(cueName);
       actionName = "/_track_" + i + "/presets/" + cueName;
       //**Add a Trigger to load created preset
@@ -845,6 +873,7 @@ function createNewPreset() {
       });
     }
   }
+  local.parameters.recordCues.reloadCue.addOption(cueName, cueName);
 }
 
 //**
