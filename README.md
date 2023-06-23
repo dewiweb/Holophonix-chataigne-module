@@ -1,5 +1,7 @@
 # Holophonix-Chataigne-Module
 
+Chataigne
+
 ## Installation
 
 To install the Custom Module, [download](https://github.com/dewiweb/Holophonix-chataigne-module/archive/refs/heads/main.zip) and unzip the files to your Documents/Chataigne/Modules folder.
@@ -16,11 +18,17 @@ To install the Custom Module, [download](https://github.com/dewiweb/Holophonix-c
 
 ## Principle of use
 
-You can automatically send "get" commands to the third within modules parameters :
+- In "Rec Mode", you can record Global Cues (XYZ,AED and Gain values).
+- Record Cues generates associated Triggers.
+- To reload Cues you've got to disable "Rec Mode" to avoid IN/OUT data's loop, it disables OSC input and set AED,XYZ and Gain States as active.
 
-- /getObjectsPositionsXYZ : for (x,y,z)cartesian objects coordinates
-- /getObjectsPositionsAED : for (a,e,d) spheric objects coordinates
-- /getObjectsGain : for objects gains
+## Additionnal Features
+
+You can automatically( with "request rate" setting) or manually send "get" commands to the third within modules parameters :
+
+- XYZ positions Request : for (x,y,z)cartesian coordinates
+- AED positions Request : for (a,e,d) spherical coordinates
+- Gain Request : for gains
 
 You may also use Module Commands to send parameters to Holophonix processor :
 
