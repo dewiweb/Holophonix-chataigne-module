@@ -1,6 +1,6 @@
 # Holophonix-Chataigne-Module
 
-An experimental Chataigne's Module to interact with [Holophonix](https://holophonix.xyz) spatial audio processor. 
+An experimental [Chataigne](http://benjamin.kuperberg.fr/chataigne)'s Module to interact with [Holophonix](https://holophonix.xyz) spatial audio processor. 
 
 Main purpose is to create cues(or scenes) of tracks 3D positions(XYZ or AED) and Gains to reload them similar a lighting cues logic.
 
