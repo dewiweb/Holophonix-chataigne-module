@@ -13,7 +13,7 @@ To install the Custom Module, [download](https://github.com/dewiweb/Holophonix-c
 - Add an Holophonix module instance (pick it in "Spatial Audio" category").
 - Specify your local OSC receiving port.
 - Specify IP address and OSC port of your Holophonix processor.
-- Specify Objects IDs to add, accepted format are:
+- Specify Objects IDs to add, accepted formats are:
   - single number (ex: 9)
   - range of numbers (ex: 5-15)
   - list of numbers (ex: 3,12,89,45)
