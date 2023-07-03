@@ -740,10 +740,16 @@ function createCC(option) {
 //* Create a new preset */
 function createNewPreset() {
   cuesNames = local.parameters.recordCues.globalCuesName.get();
+  listOfCues = root.states.cueTriggers.processors.getItems();
   cueName;
   cuesLength;
   cueTrigger = root.states.cueTriggers.processors.addItem("Action");
-  script.log("createNewPreset Triggered!!");
+  script.log(
+    "createNewPreset Triggered!!  CuesNames ==" +
+      cuesNames +
+      "listOfCues ==" +
+      JSON.stringify(listOfCues[0].name)
+  );
   ccsIDs = [];
   ccs = root.customVariables.getItems();
   for (var j = 0; j < ccs.length; j++) {
@@ -767,8 +773,14 @@ function createNewPreset() {
         .presets.addItem("String");
 
       if (cuesNames !== "") {
-        cueName = cuesNames;
-        iCC.setName(cuesNames);
+        if (listOfCues[listOfCues.length - 1].name !== cuesNames) {
+          cueName = cuesNames;
+          iCC.setName(cuesNames);
+        } else {
+          cueName = cuesNames + 1;
+          iCC.setName(cueName);
+          local.parameters.recordCues.globalCuesName.set(cueName);
+        }
       } else {
         cueName = "Cue" + (cuesLength + 1);
         iCC.setName("Cue" + (cuesLength + 1));
@@ -881,9 +893,9 @@ function createNewPreset() {
   triggerManual = root.states.cueTriggers.processors
     .getItemWithName(cueName)
     .conditions.addItem("Manual");
-  listOfCues = root.states.cueTriggers.processors.getItems();
+
   //script.log("  list of existing Cues: " + listOfCues);
-  if (listOfCues.contains(cueName) == false) {
+  if (listOfCues[0].name !== cueName) {
     local.parameters.recordCues.reloadCue.addOption(cueName, cueName);
   }
 }
