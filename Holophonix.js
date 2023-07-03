@@ -1,5 +1,5 @@
 /* Chataigne Module for Holophonix spatial audio processor
-based on Module for ADM-OSC v1.1 (c)  developped by Mathieu Delquignies, 5/2023
+based on Module for ADM-OSC v1.1 (c)  developed by Mathieu Delquignies, 5/2023
 ===============================================================================
 
 
@@ -25,7 +25,7 @@ var option = "initial";
 var recMode = local.parameters.recordCues.recMode.get();
 
 /**
- * Module intialisation
+ * Module initialization
  */
 function init() {
   // Setup default reception update rate and get update states as in module GUI
@@ -393,7 +393,7 @@ function oscEvent(address, args) {
 function update() {
   var t = util.getTime();
   if (t > lastSendTime + requestSendRate / 1000) {
-    // Sends commands to retreive values, at specified updateRate.
+    // Sends commands to retrieve values, at specified updateRate.
     if (getObjectsXYZ) {
       updateObjectsList();
       maxObjectID = objectsList[0];
@@ -959,11 +959,11 @@ function createParamReferenceTo(toValue, fromParam) {
     "Create Reference  from param : " + fromParam + " to value of : " + toValue
   );
 
-  // From param, retreive object
+  // From param, retrieve object
   var fromObj = root.getChild(fromParam);
   var paramToLink = fromObj.getParent();
 
-  // To value of, retreive object. Done in this way to validate the OSC address already provided.
+  // To value of, retrieve object. Done in this way to validate the OSC address already provided.
   var toParamValue = root.getChild(toValue).getControlAddress();
 
   // Modify Param definition to create the Reference
