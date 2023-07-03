@@ -1,0 +1,848 @@
+{
+  "modules": null,
+  "customVariables": null,
+  "states": [
+    {
+      "parameters": [
+        {
+          "value": [
+            -500.0,
+            250.0
+          ],
+          "controlAddress": "/viewUIPosition"
+        },
+        {
+          "value": [
+            750.0,
+            150.0
+          ],
+          "controlAddress": "/viewUISize"
+        },
+        {
+          "value": [
+            0.6431372761726379,
+            0.2784313857555389,
+            0.5137255191802979,
+            1.0
+          ],
+          "controlAddress": "/color"
+        },
+        {
+          "value": true,
+          "controlAddress": "/active"
+        }
+      ],
+      "niceName": "Cue Triggers",
+      "type": "State",
+      "processors": {
+        "items": [
+          {
+            "niceName": "Cue1",
+            "editorIsCollapsed": true,
+            "type": "Action",
+            "conditions": {
+              "items": [
+                {
+                  "parameters": [
+                    {
+                      "value": false,
+                      "controlAddress": "/active"
+                    }
+                  ],
+                  "niceName": "Manual",
+                  "type": "Manual"
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequences": {
+              "items": [
+                {
+                  "niceName": "track 11",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_11/presets/Cue1",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                },
+                {
+                  "niceName": "track 12",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_12/presets/Cue1",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequencesOff": {
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            }
+          },
+          {
+            "niceName": "Cue2",
+            "editorIsCollapsed": true,
+            "type": "Action",
+            "conditions": {
+              "items": [
+                {
+                  "niceName": "Manual",
+                  "type": "Manual"
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequences": {
+              "items": [
+                {
+                  "niceName": "track 11",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_11/presets/Cue2",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                },
+                {
+                  "niceName": "track 12",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_12/presets/Cue2",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequencesOff": {
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            }
+          },
+          {
+            "niceName": "babar",
+            "editorIsCollapsed": true,
+            "type": "Action",
+            "conditions": {
+              "items": [
+                {
+                  "parameters": [
+                    {
+                      "value": false,
+                      "controlAddress": "/active"
+                    }
+                  ],
+                  "niceName": "Manual",
+                  "type": "Manual"
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequences": {
+              "items": [
+                {
+                  "niceName": "track 11",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_11/presets/babar",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                },
+                {
+                  "niceName": "track 12",
+                  "type": "Consequence",
+                  "commandModule": "customVariables",
+                  "commandPath": "",
+                  "commandType": "Go to preset",
+                  "command": {
+                    "parameters": [
+                      {
+                        "value": "/_track_12/presets/babar",
+                        "controlAddress": "/targetPreset"
+                      },
+                      {
+                        "value": 5.0,
+                        "controlAddress": "/interpolationTime",
+                        "enabled": true
+                      }
+                    ],
+                    "containers": {
+                      "interpolationCurve": {
+                        "parameters": [
+                          {
+                            "value": 1.0,
+                            "controlAddress": "/length"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/viewValueRange"
+                          },
+                          {
+                            "value": [
+                              0.0,
+                              1.0
+                            ],
+                            "controlAddress": "/range",
+                            "enabled": true
+                          },
+                          {
+                            "value": false,
+                            "controlAddress": "/enabled"
+                          }
+                        ],
+                        "editorIsCollapsed": true,
+                        "hideInRemoteControl": false,
+                        "items": [
+                          {
+                            "parameters": [
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key",
+                            "containers": {
+                              "easing": {
+                                "parameters": [
+                                  {
+                                    "value": [
+                                      0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor1"
+                                  },
+                                  {
+                                    "value": [
+                                      -0.300000011920929,
+                                      0.0
+                                    ],
+                                    "controlAddress": "/anchor2"
+                                  }
+                                ]
+                              }
+                            },
+                            "type": "Key"
+                          },
+                          {
+                            "parameters": [
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/position"
+                              },
+                              {
+                                "value": 1.0,
+                                "controlAddress": "/value"
+                              },
+                              {
+                                "value": "Bezier",
+                                "controlAddress": "/easingType"
+                              }
+                            ],
+                            "niceName": "Key 1",
+                            "containers": {
+                              "easing": {
+                              }
+                            },
+                            "type": "Key"
+                          }
+                        ],
+                        "viewOffset": [
+                          0,
+                          0
+                        ],
+                        "viewZoom": 1.0,
+                        "owned": true,
+                        "niceName": "Interpolation Curve"
+                      }
+                    },
+                    "paramLinks": {
+                    }
+                  }
+                }
+              ],
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            },
+            "consequencesOff": {
+              "viewOffset": [
+                0,
+                0
+              ],
+              "viewZoom": 1.0
+            }
+          }
+        ],
+        "viewOffset": [
+          0,
+          0
+        ],
+        "viewZoom": 1.0
+      }
+    }
+  ],
+  "sequences": null,
+  "routers": null
+}

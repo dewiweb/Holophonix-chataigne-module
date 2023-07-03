@@ -278,7 +278,13 @@ function moduleParameterChanged(param) {
     }
   }
   if (param.name == "reloadCue") {
-    root.states.cueTriggers.processors.cue1.consequencesTRUE.trigger;
+    cueToReload = local.parameters.recordCues.reloadCue.get();
+    manualAction =
+      root.states.cueTriggers.processors.getItemWithName(cueToReload).conditions
+        .manual.active;
+    script.log("Manual action = " + manualAction);
+    manualAction.set(1);
+    manualAction.set(0);
   }
 }
 
@@ -767,7 +773,6 @@ function createNewPreset() {
         cueName = "Cue" + (cuesLength + 1);
         iCC.setName("Cue" + (cuesLength + 1));
       }
-
       cueTrigger.setName(cueName);
       actionName = "/_track_" + i + "/presets/" + cueName;
       //**Add a Trigger to load created preset
@@ -873,7 +878,14 @@ function createNewPreset() {
       });
     }
   }
-  local.parameters.recordCues.reloadCue.addOption(cueName, cueName);
+  triggerManual = root.states.cueTriggers.processors
+    .getItemWithName(cueName)
+    .conditions.addItem("Manual");
+  listOfCues = root.states.cueTriggers.processors.getItems();
+  //script.log("  list of existing Cues: " + listOfCues);
+  if (listOfCues.contains(cueName) == false) {
+    local.parameters.recordCues.reloadCue.addOption(cueName, cueName);
+  }
 }
 
 //**
