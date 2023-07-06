@@ -42,6 +42,9 @@
 			},
 			"Add Objects": {
 				"type": "Trigger"
+			},
+			"Delete Objects": {
+				"type": "Trigger"
 			}
 		},
 		"Request Values": {
@@ -92,8 +95,14 @@
 				"description": "Set a specific Name",
 				"type": "String"
 			},
-			"Reload Cue": {
+			"Select Cue": {
 				"type": "Enum"
+			},
+			"Reload Cue": {
+				"type": "Trigger"
+			},
+			"Delete Cue": {
+				"type": "Trigger"
 			}
 		}
 	},

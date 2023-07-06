@@ -18,7 +18,8 @@ var gainParam = [];
 
 var objectsList = [];
 
-var declaredObjects;
+var objectsIDsDeclaration;
+var declaredObjects = [];
 var lastSendTime = 0;
 var requestSendRate; //in milliseconds
 var option = "initial";
@@ -34,7 +35,7 @@ function init() {
   getObjectsXYZ = local.parameters.requestValues.autoXYZPositionsRequest.get();
   getObjectsAED = local.parameters.requestValues.autoAEDPositionsRequest.get();
   getObjectsGain = local.parameters.requestValues.autoGainRequest.get();
-  declaredObjects = local.parameters.objects.objectsIDs.get();
+  objectsIDsDeclaration = local.parameters.objects.objectsIDs.get();
   updateObjectsList();
   // Module GUI settings
   local.scripts.setCollapsed(true);
@@ -157,6 +158,7 @@ function init() {
     });
   }
   root.states.cueTriggers.active.set(false);
+  updateObjectsList();
 }
 
 /**
@@ -202,35 +204,21 @@ function moduleParameterChanged(param) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
   }
+  if (param.name == "objectsIDs") {
+    getDeclaredObjects();
+  }
   if (param.name == "addObjects") {
+    getDeclaredObjects();
     // New Objects declared.
-    declaredObjects = local.parameters.objects.objectsIDs.get();
-    if (declaredObjects.indexOf("-") > -1) {
-      tmpList = declaredObjects.split("-");
-      script.log("tmpList   " + JSON.stringify(tmpList));
-      objectsList[parseInt(tmpList[0])] = parseInt(tmpList[0]);
-      objectsList[parseInt(tmpList[1])] = parseInt(tmpList[1]);
-      for (i = parseInt(tmpList[0]) + 1; i < parseInt(tmpList[1]); i++) {
-        objectsList[i] = i;
-      }
-
-      script.log(" objects list case 1 : " + JSON.stringify(objectsList));
-    } else if (declaredObjects.indexOf(",") > -1) {
-      tmpList1 = declaredObjects.split(",");
-      script.log("tmpList1   " + JSON.stringify(tmpList1));
-      for (i = 0; i < parseInt(tmpList1[tmpList1.length - 1]) + 1; i++) {
-        if (tmpList1.indexOf(i) > -1) {
-          objectsList[i] = i;
-        }
-      }
-      script.log(" objects list case 2 : " + JSON.stringify(objectsList));
-    } else {
-      objectsList[parseInt(declaredObjects)] = parseInt(declaredObjects);
-      script.log(" objects list case 3 : " + JSON.stringify(objectsList));
-    }
-
     createObjectsContainer();
-    createCC();
+    createCV();
+  }
+  if (param.name == "deleteObjects") {
+    getDeclaredObjects();
+    script.log("declared objects are :" + objectsList);
+    //updateObjectsList();
+    deleteObjectsContainer();
+    deleteCVs();
   }
   if (param.name == "manualXYZPositionsRequest") {
     updateObjectsList();
@@ -278,13 +266,41 @@ function moduleParameterChanged(param) {
     }
   }
   if (param.name == "reloadCue") {
-    cueToReload = local.parameters.recordCues.reloadCue.get();
+    root.states.cueTriggers.active.set(1);
+    cueToReload = local.parameters.recordCues.selectCue.get();
     manualAction =
       root.states.cueTriggers.processors.getItemWithName(cueToReload).conditions
         .manual.active;
     script.log("Manual action = " + manualAction);
     manualAction.set(1);
     manualAction.set(0);
+  }
+  if (param.name == "deleteCue") {
+    cueToDelete = local.parameters.recordCues.selectCue.get();
+    //script.log("Cue to delete : " + cueToDelete);
+    toDelete = root.states.cueTriggers.processors.getItemWithName(cueToDelete);
+    allCues = local.parameters.recordCues.selectCue.getAllOptions();
+    //script.log("all options : " + JSON.stringify(allCues));
+    local.parameters.recordCues.selectCue.removeOptions();
+    for (i = 0; i < allCues.length; i++) {
+      //script.log("i key : " + allCues[i].key);
+      if (allCues[i].key !== cueToDelete) {
+        local.parameters.recordCues.selectCue.addOption(
+          allCues[i].key,
+          allCues[i].key
+        );
+      } else {
+      }
+    }
+
+    root.states.cueTriggers.processors.removeItem(toDelete);
+
+    cVs = root.customVariables.getItems();
+    for (var j = 0; j < cVs.length; j++) {
+      if (cVs[j].presets.getItemWithName(cueToDelete) !== undefined) {
+        cVs[j].presets.removeItem(cueToDelete);
+      }
+    }
   }
 }
 
@@ -454,8 +470,8 @@ function createObjectsContainer(option) {
 
   //** Add XYZ container & values */
   xyzContainer = ObjectsContainer.addContainer("xyz");
-  for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
-    if (objectsList[i] !== undefined) {
+  for (i = 0; i < declaredObjects.length; i++) {
+    if (declaredObjects[i] !== undefined) {
       xyzParam[i] = xyzContainer.addPoint3DParameter(i, "xyz", 0, -20, 20);
       xyzParam[i].setAttribute("readonly", true);
     }
@@ -464,8 +480,8 @@ function createObjectsContainer(option) {
 
   //** Add AED container & values */
   aedContainer = ObjectsContainer.addContainer("aed");
-  for (i = 0; i < objectsList.length; i++) {
-    if (objectsList[i] !== undefined) {
+  for (i = 0; i < declaredObjects.length; i++) {
+    if (declaredObjects[i] !== undefined) {
       aedParam[i] = aedContainer.addPoint3DParameter(i, "aed", 0);
       aedParam[i].setAttribute("readonly", true);
     }
@@ -474,8 +490,8 @@ function createObjectsContainer(option) {
 
   //** Add gain container & values */
   gainContainer = ObjectsContainer.addContainer("gain");
-  for (i = 0; i < objectsList.length; i++) {
-    if (objectsList[i] !== undefined) {
+  for (i = 0; i < declaredObjects.length; i++) {
+    if (declaredObjects[i] !== undefined) {
       gainParam[i] = gainContainer.addFloatParameter(i, "gain", 0, -60, 12);
       gainParam[i].setAttribute("readonly", true);
     }
@@ -483,41 +499,57 @@ function createObjectsContainer(option) {
   gainContainer.setCollapsed(true);
 }
 
+function deleteObjectsContainer() {
+  if (local.values.objectsParameters == undefined) {
+    ObjectsContainer = local.values.addContainer("Objects parameters");
+  } else {
+    ObjectsContainer = local.values.objectsParameters;
+  }
+
+  for (i = 0; i < declaredObjects[declaredObjects.length - 1] + 1; i++) {
+    if (declaredObjects[i] !== undefined) {
+      ObjectsContainer.xyz.removeParameter(i);
+      ObjectsContainer.aed.removeParameter(i);
+      ObjectsContainer.gain.removeParameter(i);
+    }
+  }
+}
+
 //** Create New Custom Variable based on declared Object  */
-function createCC(option) {
-  existingCCs = root.customVariables.getItems();
+function createCV(option) {
+  existingCVs = root.customVariables.getItems();
   if (option == "initial") {
-    for (i = 0; i < objectsList[objectsList.length - 1] + 1; i++) {
-      if (objectsList[i] !== undefined) {
-        trCC = root.customVariables.addItem();
-        trCC.setName("/track/" + i);
-        trCCxyz = trCC.variables.addItem("Point3D Parameter");
-        trCCxyz.setName("/xyz");
-        trCCaed = trCC.variables.addItem("Point3D Parameter");
-        trCCaed.setName("/aed");
-        trCCgain = trCC.variables.addItem("Float Parameter");
-        trCCgain.setName("/gain");
+    for (i = 0; i < declaredObjects[declaredObjects.length - 1] + 1; i++) {
+      if (declaredObjects[i] !== undefined) {
+        trCV = root.customVariables.addItem();
+        trCV.setName("/track/" + i);
+        trCVxyz = trCV.variables.addItem("Point3D Parameter");
+        trCVxyz.setName("/xyz");
+        trCVaed = trCV.variables.addItem("Point3D Parameter");
+        trCVaed.setName("/aed");
+        trCVgain = trCV.variables.addItem("Float Parameter");
+        trCVgain.setName("/gain");
       }
     }
     option = "";
   } else {
-    ccsNames = [];
-    ccs = root.customVariables.getItems();
-    for (var j = 0; j < ccs.length; j++) {
-      ccsNames.push(ccs[j].name);
-      //      root.customVariables.removeItem(ccs[j].name);
+    cVsNames = [];
+    cVs = root.customVariables.getItems();
+    for (var j = 0; j < cVs.length; j++) {
+      cVsNames.push(cVs[j].name);
+      //      root.customVariables.removeItem(cVs[j].name);
     }
 
-    for (i = 0; i < objectsList.length; i++) {
-      ccIndex = ccsNames.indexOf("_track_" + i);
-      script.log(" CC in CCs index = " + ccIndex + " for i = " + i);
-      script.log("list of existing CCs : " + JSON.stringify(ccsNames));
-      if (objectsList[i] !== undefined) {
-        if (ccIndex == -1) {
-          trCC = root.customVariables.addItem();
-          trCC.setName("/track/" + i);
-          trCCxyz = trCC.variables.addItem("Point3D Parameter");
-          trCCxyz.setName("/xyz");
+    for (i = 0; i < declaredObjects.length; i++) {
+      cVindex = cVsNames.indexOf("_track_" + i);
+      script.log(" CV in CVs index = " + cVindex + " for i = " + i);
+      script.log("list of existing CVs : " + JSON.stringify(cVsNames));
+      if (declaredObjects[i] !== undefined) {
+        if (cVindex == -1) {
+          trCV = root.customVariables.addItem();
+          trCV.setName("/track/" + i);
+          trCVxyz = trCV.variables.addItem("Point3D Parameter");
+          trCVxyz.setName("/xyz");
           createParamReferenceTo(
             "/modules/holophonix/values/objectsParameters/xyz/" + i,
             "/customVariables/_track_" + i + "/variables/_xyz/_xyz"
@@ -588,8 +620,8 @@ function createCC(option) {
               viewZoom: 1.0,
             },
           });
-          trCCaed = trCC.variables.addItem("Point3D Parameter");
-          trCCaed.setName("/aed");
+          trCVaed = trCV.variables.addItem("Point3D Parameter");
+          trCVaed.setName("/aed");
           createParamReferenceTo(
             "/modules/holophonix/values/objectsParameters/aed/" + i,
             "/customVariables/_track_" + i + "/variables/_aed/_aed"
@@ -659,8 +691,8 @@ function createCC(option) {
               viewZoom: 1.0,
             },
           });
-          trCCgain = trCC.variables.addItem("Float Parameter");
-          trCCgain.setName("/gain");
+          trCVgain = trCV.variables.addItem("Float Parameter");
+          trCVgain.setName("/gain");
           createParamReferenceTo(
             "/modules/holophonix/values/objectsParameters/gain/" + i,
             "/customVariables/_track_" + i + "/variables/_gain/_gain"
@@ -737,6 +769,17 @@ function createCC(option) {
   }
 }
 
+function deleteCVs() {
+  for (i = 0; i < declaredObjects.length; i++) {
+    if (declaredObjects[i] !== undefined) {
+      root.customVariables.removeItem("/track/" + i);
+      root.states.xyzStates.processors.removeItem("/track/" + i);
+      root.states.aedStates.processors.removeItem("/track/" + i);
+      root.states.gainStates.processors.removeItem("/track/" + i);
+    }
+  }
+}
+
 //* Create a new preset */
 function createNewPreset() {
   cuesNames = local.parameters.recordCues.globalCuesName.get();
@@ -750,40 +793,40 @@ function createNewPreset() {
       "listOfCues ==" +
       JSON.stringify(listOfCues[0].name)
   );
-  ccsIDs = [];
-  ccs = root.customVariables.getItems();
-  for (var j = 0; j < ccs.length; j++) {
-    ccsIDs.push(parseInt(ccs[j].name.split("_")[2]));
+  cVsIDs = [];
+  cVs = root.customVariables.getItems();
+  for (var j = 0; j < cVs.length; j++) {
+    cVsIDs.push(parseInt(cVs[j].name.split("_")[2]));
   }
-  maxID = ccsIDs[0];
-  for (i = 1; i < ccsIDs.length; ++i) {
-    if (ccsIDs[i] > maxID) {
-      maxID = ccsIDs[i];
+  maxID = cVsIDs[0];
+  for (i = 1; i < cVsIDs.length; ++i) {
+    if (cVsIDs[i] > maxID) {
+      maxID = cVsIDs[i];
     }
   }
-  script.log("ccs Max ID : " + maxID);
+  script.log("cVs Max ID : " + maxID);
 
   for (i = 0; i < maxID + 1; i++) {
-    if (ccsIDs.contains(i)) {
+    if (cVsIDs.contains(i)) {
       cuesLength = root.customVariables
         .getItemWithName("_track_" + i)
         .presets.getItems().length;
-      iCC = root.customVariables
+      iCV = root.customVariables
         .getItemWithName("_track_" + i)
         .presets.addItem("String");
 
       if (cuesNames !== "") {
         if (listOfCues[listOfCues.length - 1].name !== cuesNames) {
           cueName = cuesNames;
-          iCC.setName(cuesNames);
+          iCV.setName(cuesNames);
         } else {
           cueName = cuesNames + 1;
-          iCC.setName(cueName);
+          iCV.setName(cueName);
           local.parameters.recordCues.globalCuesName.set(cueName);
         }
       } else {
         cueName = "Cue" + (cuesLength + 1);
-        iCC.setName("Cue" + (cuesLength + 1));
+        iCV.setName("Cue" + (cuesLength + 1));
       }
       cueTrigger.setName(cueName);
       actionName = "/_track_" + i + "/presets/" + cueName;
@@ -895,8 +938,8 @@ function createNewPreset() {
     .conditions.addItem("Manual");
 
   //script.log("  list of existing Cues: " + listOfCues);
-  if (listOfCues[0].name !== cueName) {
-    local.parameters.recordCues.reloadCue.addOption(cueName, cueName);
+  if (listOfCues[listOfCues.length - 1].name !== cueName) {
+    local.parameters.recordCues.selectCue.addOption(cueName, cueName);
   }
 }
 
@@ -965,7 +1008,7 @@ function getGain(sourceIndex) {
   local.send("/get", "/track/" + sourceIndex + "/gain");
 }
 
-//**Function to link module Values to corresponding CCs
+//**Function to link module Values to corresponding CVs
 function createParamReferenceTo(toValue, fromParam) {
   script.log(
     "Create Reference  from param : " + fromParam + " to value of : " + toValue
@@ -999,6 +1042,39 @@ function createParamReferenceTo(toValue, fromParam) {
   });
 }
 
+function getDeclaredObjects() {
+  for (k = 1; k < 129; k++) {
+    declaredObjects[k] = undefined;
+  }
+  objectsIDsDeclaration = local.parameters.objects.objectsIDs.get();
+  if (objectsIDsDeclaration.indexOf("-") > -1) {
+    tmpList = objectsIDsDeclaration.split("-");
+    script.log("tmpList   " + JSON.stringify(tmpList));
+    declaredObjects[parseInt(tmpList[0])] = parseInt(tmpList[0]);
+    declaredObjects[parseInt(tmpList[1])] = parseInt(tmpList[1]);
+
+    for (i = parseInt(tmpList[0]) + 1; i < parseInt(tmpList[1]); i++) {
+      declaredObjects[i] = i;
+    }
+
+    script.log(" objects list case 1 : " + JSON.stringify(declaredObjects));
+  } else if (objectsIDsDeclaration.indexOf(",") > -1) {
+    tmpList1 = objectsIDsDeclaration.split(",");
+    script.log("tmpList1   " + JSON.stringify(tmpList1));
+    for (i = 0; i < parseInt(tmpList1[tmpList1.length - 1]) + 1; i++) {
+      if (tmpList1.indexOf(i) > -1) {
+        declaredObjects[i] = i;
+      }
+    }
+    script.log(" objects list case 2 : " + JSON.stringify(declaredObjects));
+  } else {
+    declaredObjects[parseInt(objectsIDsDeclaration)] = parseInt(
+      objectsIDsDeclaration
+    );
+    script.log(" objects list case 3 : " + JSON.stringify(declaredObjects));
+  }
+}
+
 function updateObjectsList() {
   for (i = 0; i < 129; i++) {
     if (local.values.objectsParameters.xyz) {
@@ -1009,6 +1085,6 @@ function updateObjectsList() {
   }
 }
 
-if (local.values.objectsParameters.xyz) {
-  updateObjectsList();
-}
+//if (local.values.objectsParameters.xyz) {
+//  updateObjectsList();
+//}
