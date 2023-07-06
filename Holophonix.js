@@ -222,45 +222,24 @@ function moduleParameterChanged(param) {
   }
   if (param.name == "manualXYZPositionsRequest") {
     updateObjectsList();
-    maxObjectID = objectsList[0];
-    for (i = 1; i < objectsList.length; ++i) {
-      if (objectsList[i] > maxID) {
-        maxObjectID = objectsList[i];
-      }
-    }
-
-    for (i = 0; i < maxObjectID + 1; i++) {
-      if (local.values.objectsParameters.xyz.getChild(i) !== null) {
+    for (i = 0; i < objectsList.length; i++) {
+      if (local.values.objectsParameters.xyz.getChild(i) !== undefined) {
         getXYZ(i);
       }
     }
   }
   if (param.name == "manualAEDPositionsRequest") {
     updateObjectsList();
-    maxObjectID = objectsList[0];
-    for (i = 1; i < objectsList.length; ++i) {
-      if (objectsList[i] > maxID) {
-        maxObjectID = objectsList[i];
-      }
-    }
-
-    for (i = 0; i < maxObjectID + 1; i++) {
-      if (local.values.objectsParameters.aed.getChild(i) !== null) {
+    for (i = 0; i < objectsList.length; i++) {
+      if (local.values.objectsParameters.aed.getChild(i) !== undefined) {
         getAED(i);
       }
     }
   }
   if (param.name == "manualGainRequest") {
     updateObjectsList();
-    maxObjectID = objectsList[0];
-    for (i = 1; i < objectsList.length; ++i) {
-      if (objectsList[i] > maxID) {
-        maxObjectID = objectsList[i];
-      }
-    }
-
-    for (i = 0; i < maxObjectID + 1; i++) {
-      if (local.values.objectsParameters.gain.getChild(i) !== null) {
+    for (i = 0; i < objectsList.length; i++) {
+      if (local.values.objectsParameters.gain.getChild(i) !== undefined) {
         getGain(i);
       }
     }
@@ -412,45 +391,24 @@ function update() {
     // Sends commands to retrieve values, at specified updateRate.
     if (getObjectsXYZ) {
       updateObjectsList();
-      maxObjectID = objectsList[0];
-      for (i = 1; i < objectsList.length; ++i) {
-        if (objectsList[i] > maxID) {
-          maxObjectID = objectsList[i];
-        }
-      }
-
-      for (i = 0; i < maxObjectID + 1; i++) {
-        if (local.values.objectsParameters.xyz.getChild(i) !== null) {
+      for (i = 0; i < objectsList.length; i++) {
+        if (local.values.objectsParameters.xyz.getChild(i) !== undefined) {
           getXYZ(i);
         }
       }
     }
     if (getObjectsAED) {
       updateObjectsList();
-      maxObjectID = objectsList[0];
-      for (i = 1; i < objectsList.length; ++i) {
-        if (objectsList[i] > maxID) {
-          maxObjectID = objectsList[i];
-        }
-      }
-
-      for (i = 0; i < maxObjectID + 1; i++) {
-        if (local.values.objectsParameters.aed.getChild(i) !== null) {
+      for (i = 0; i < objectsList.length; i++) {
+        if (local.values.objectsParameters.aed.getChild(i) !== undefined) {
           getAED(i);
         }
       }
     }
     if (getObjectsGain) {
       updateObjectsList();
-      maxObjectID = objectsList[0];
-      for (i = 1; i < objectsList.length; ++i) {
-        if (objectsList[i] > maxID) {
-          maxObjectID = objectsList[i];
-        }
-      }
-
-      for (i = 0; i < maxObjectID + 1; i++) {
-        if (local.values.objectsParameters.gain.getChild(i) !== null) {
+      for (i = 0; i < objectsList.length; i++) {
+        if (local.values.objectsParameters.gain.getChild(i) !== undefined) {
           getGain(i);
         }
       }
