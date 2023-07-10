@@ -5,7 +5,7 @@ An experimental [Chataigne](http://benjamin.kuperberg.fr/chataigne)'s Module to 
 Main purpose is to create cues(or scenes) of tracks 3D positions(XYZ or AED) and Gains to reload them similar a lighting cues logic.
 
 <p align="center">
-<img style=" float:left; width:50%" src="https://github.com/dewiweb/Holophonix-chataigne-module/blob/main/example/example.gif" width="45%">
+<img src="https://github.com/dewiweb/Holophonix-chataigne-module/blob/main/example/example.gif">
 </p>
 
 ## Installation
