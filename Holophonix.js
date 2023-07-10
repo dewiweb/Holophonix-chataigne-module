@@ -67,7 +67,6 @@ function init() {
       },
     });
   }
-  root.states.xyzStates.active.set(false);
 
   if (root.states.getChild("AED states") == undefined) {
     AEDstates = root.states.addItem();
@@ -96,7 +95,6 @@ function init() {
       },
     });
   }
-  root.states.aedStates.active.set(false);
 
   if (root.states.getChild("Gain states") == undefined) {
     gainStates = root.states.addItem();
@@ -125,7 +123,7 @@ function init() {
       },
     });
   }
-  root.states.gainStates.active.set(false);
+
   if (root.states.getChild("Cue Triggers") == undefined) {
     cueTriggers = root.states.addItem();
     cueTriggers.loadJSONData({
@@ -145,7 +143,7 @@ function init() {
           controlAddress: "/viewUISize",
         },
         {
-          value: true,
+          value: false,
           controlAddress: "/active",
         },
       ],
@@ -156,8 +154,22 @@ function init() {
         viewZoom: 1.0,
       },
     });
+  } else {
+    cueListState = root.states.getChild("Cue Triggers");
+    cueList = cueListState.processors.getItems();
+    if (local.parameters.recordCues.selectCue.getAllOptions() == null) {
+      for (i = 0; i < cueList.length; i++) {
+        local.parameters.recordCues.selectCue.addOption(
+          cueList[i].name,
+          cueList[i].name
+        );
+      }
+    }
+    script.log(
+      "cue list : " + JSON.stringify(cueListState.processors.getItems())
+    );
   }
-  root.states.cueTriggers.active.set(false);
+
   updateObjectsList();
 }
 
@@ -1036,7 +1048,7 @@ function getDeclaredObjects() {
 function updateObjectsList() {
   for (i = 0; i < 129; i++) {
     if (local.values.objectsParameters.xyz) {
-      if (local.values.objectsParameters.xyz.getChild(i)) {
+      if (root.customVariables.getChild("_track_" + i)) {
         objectsList[i] = i;
       }
     }
