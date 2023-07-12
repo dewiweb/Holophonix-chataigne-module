@@ -143,7 +143,7 @@ function init() {
           controlAddress: "/viewUISize",
         },
         {
-          value: false,
+          value: true,
           controlAddress: "/active",
         },
       ],
