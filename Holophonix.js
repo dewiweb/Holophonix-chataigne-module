@@ -7,19 +7,19 @@ based on Module for ADM-OSC v1.1 (c)  developed by Mathieu Delquignies, 5/2023
  *  GLOBAL VARIABLES
  */
 // Module parameters
-var getObjectsXYZ = false;
-var getObjectsAED = false;
-var getObjectsGain = false;
+var getTracksXYZ = false;
+var getTracksAED = false;
+var getTracksGain = false;
 
-// objects parameters containers pointers arrays
+// tracks parameters containers pointers arrays
 var xyzParam = [];
 var aedParam = [];
 var gainParam = [];
 
-var objectsList = [];
+var tracksList = [];
 
-var objectsIDsDeclaration;
-var declaredObjects = [];
+var tracksIDsDeclaration;
+var declaredTracks = [];
 var lastSendTime = 0;
 var requestSendRate; //in milliseconds
 var option = "initial";
@@ -32,11 +32,11 @@ function init() {
   // Setup default reception update rate and get update states as in module GUI
   requestSendRate = local.parameters.requestValues.autoRequestRate.get();
   script.setUpdateRate(5000);
-  getObjectsXYZ = local.parameters.requestValues.autoXYZPositionsRequest.get();
-  getObjectsAED = local.parameters.requestValues.autoAEDPositionsRequest.get();
-  getObjectsGain = local.parameters.requestValues.autoGainRequest.get();
-  objectsIDsDeclaration = local.parameters.objects.objectsIDs.get();
-  updateObjectsList();
+  getTracksXYZ = local.parameters.requestValues.autoXYZPositionsRequest.get();
+  getTracksAED = local.parameters.requestValues.autoAEDPositionsRequest.get();
+  getTracksGain = local.parameters.requestValues.autoGainRequest.get();
+  tracksIDsDeclaration = local.parameters.controlledTracks.tracksIDs.get();
+  updateTracksList();
   // Module GUI settings
   local.scripts.setCollapsed(true);
   //Add States to state machine
@@ -170,7 +170,7 @@ function init() {
     );
   }
 
-  updateObjectsList();
+  updateTracksList();
 }
 
 /**
@@ -202,13 +202,13 @@ function moduleParameterChanged(param) {
     }
     // handling of "get" parameters settings changes
     if (param.is(local.parameters.requestValues.autoXYZPositionsRequest)) {
-      getObjectsXYZ = param.get();
+      getTracksXYZ = param.get();
     }
     if (param.is(local.parameters.requestValues.autoAEDPositionsRequest)) {
-      getObjectsAED = param.get();
+      getTracksAED = param.get();
     }
     if (param.is(local.parameters.requestValues.autoGainRequest)) {
-      getObjectsGain = param.get();
+      getTracksGain = param.get();
     }
   }
 
@@ -216,42 +216,42 @@ function moduleParameterChanged(param) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
   }
-  if (param.name == "objectsIDs") {
-    getDeclaredObjects();
+  if (param.name == "tracksIDs") {
+    getDeclaredTracks();
   }
-  if (param.name == "addObjects") {
-    getDeclaredObjects();
-    // New Objects declared.
-    createObjectsContainer();
+  if (param.name == "addTracks") {
+    getDeclaredTracks();
+    // New Tracks declared.
+    createTracksContainer();
     createCV();
   }
-  if (param.name == "deleteObjects") {
-    getDeclaredObjects();
-    script.log("declared objects are :" + objectsList);
-    //updateObjectsList();
-    deleteObjectsContainer();
+  if (param.name == "deleteTracks") {
+    getDeclaredTracks();
+    script.log("declared tracks are :" + tracksList);
+    //updateTracksList();
+    deleteTracksContainer();
     deleteCVs();
   }
   if (param.name == "manualXYZPositionsRequest") {
-    updateObjectsList();
-    for (i = 0; i < objectsList.length; i++) {
-      if (local.values.objectsParameters.xyz.getChild(i) !== undefined) {
+    updateTracksList();
+    for (i = 0; i < tracksList.length; i++) {
+      if (local.values.tracksParameters.xyz.getChild(i) !== undefined) {
         getXYZ(i);
       }
     }
   }
   if (param.name == "manualAEDPositionsRequest") {
-    updateObjectsList();
-    for (i = 0; i < objectsList.length; i++) {
-      if (local.values.objectsParameters.aed.getChild(i) !== undefined) {
+    updateTracksList();
+    for (i = 0; i < tracksList.length; i++) {
+      if (local.values.tracksParameters.aed.getChild(i) !== undefined) {
         getAED(i);
       }
     }
   }
   if (param.name == "manualGainRequest") {
-    updateObjectsList();
-    for (i = 0; i < objectsList.length; i++) {
-      if (local.values.objectsParameters.gain.getChild(i) !== undefined) {
+    updateTracksList();
+    for (i = 0; i < tracksList.length; i++) {
+      if (local.values.tracksParameters.gain.getChild(i) !== undefined) {
         getGain(i);
       }
     }
@@ -334,63 +334,63 @@ function oscEvent(address, args) {
   // Parse address
   if (address[1] == "track") {
     var objectID = parseInt(address[2]);
-    if (objectsList !== undefined) {
-      if (objectsList.indexOf(objectID) == -1) {
+    if (tracksList !== undefined) {
+      if (tracksList.indexOf(objectID) == -1) {
         script.logWarning("Received not handled object number #" + objectID);
         return;
       }
 
       if (address[3] == "xyz") {
-        local.values.objectsParameters.xyz.getChild(objectID).set(args);
+        local.values.tracksParameters.xyz.getChild(objectID).set(args);
       }
       if (address[3] == "x") {
-        previousXYZ = local.values.objectsParameters.xyz
+        previousXYZ = local.values.tracksParameters.xyz
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.xyz
+        local.values.tracksParameters.xyz
           .getChild(objectID)
           .set(args[0], previousXYZ[1], previousXYZ[2]);
       }
       if (address[3] == "y") {
-        previousXYZ = local.values.objectsParameters.xyz
+        previousXYZ = local.values.tracksParameters.xyz
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.xyz
+        local.values.tracksParameters.xyz
           .getChild(objectID)
           .set(previousXYZ[0], args[0], previousXYZ[2]);
       }
       if (address[3] == "z") {
-        previousXYZ = local.values.objectsParameters.xyz
+        previousXYZ = local.values.tracksParameters.xyz
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.xyz
+        local.values.tracksParameters.xyz
           .getChild(objectID)
           .set(previousXYZ[0], previousXYZ[1], args[0]);
       }
       if (address[3] == "aed") {
-        local.values.objectsParameters.aed.getChild(objectID).set(args);
+        local.values.tracksParameters.aed.getChild(objectID).set(args);
       }
       if (address[3] == "azim") {
-        previousAED = local.values.objectsParameters.aed
+        previousAED = local.values.tracksParameters.aed
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.aed
+        local.values.tracksParameters.aed
           .getChild(objectID)
           .set(args[0], previousAED[1], previousAED[2]);
       }
       if (address[3] == "elev") {
-        previousAED = local.values.objectsParameters.aed
+        previousAED = local.values.tracksParameters.aed
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.aed
+        local.values.tracksParameters.aed
           .getChild(objectID)
           .set(previousAED[0], args[0], previousAED[2]);
       }
       if (address[3] == "dist") {
-        previousAED = local.values.objectsParameters.aed
+        previousAED = local.values.tracksParameters.aed
           .getChild(objectID)
           .get();
-        local.values.objectsParameters.aed
+        local.values.tracksParameters.aed
           .getChild(objectID)
           .set(previousAED[0], previousAED[1], args[0]);
       }
@@ -398,7 +398,7 @@ function oscEvent(address, args) {
         script.log(
           "gain value : " + args + " received for track n° : " + objectID
         );
-        local.values.objectsParameters.gain.getChild(objectID).set(args[0]);
+        local.values.tracksParameters.gain.getChild(objectID).set(args[0]);
       }
     }
   }
@@ -411,26 +411,26 @@ function update() {
   var t = util.getTime();
   if (t > lastSendTime + requestSendRate / 1000) {
     // Sends commands to retrieve values, at specified updateRate.
-    if (getObjectsXYZ) {
-      updateObjectsList();
-      for (i = 0; i < objectsList.length; i++) {
-        if (local.values.objectsParameters.xyz.getChild(i) !== undefined) {
+    if (getTracksXYZ) {
+      updateTracksList();
+      for (i = 0; i < tracksList.length; i++) {
+        if (local.values.tracksParameters.xyz.getChild(i) !== undefined) {
           getXYZ(i);
         }
       }
     }
-    if (getObjectsAED) {
-      updateObjectsList();
-      for (i = 0; i < objectsList.length; i++) {
-        if (local.values.objectsParameters.aed.getChild(i) !== undefined) {
+    if (getTracksAED) {
+      updateTracksList();
+      for (i = 0; i < tracksList.length; i++) {
+        if (local.values.tracksParameters.aed.getChild(i) !== undefined) {
           getAED(i);
         }
       }
     }
-    if (getObjectsGain) {
-      updateObjectsList();
-      for (i = 0; i < objectsList.length; i++) {
-        if (local.values.objectsParameters.gain.getChild(i) !== undefined) {
+    if (getTracksGain) {
+      updateTracksList();
+      for (i = 0; i < tracksList.length; i++) {
+        if (local.values.tracksParameters.gain.getChild(i) !== undefined) {
           getGain(i);
         }
       }
@@ -440,18 +440,18 @@ function update() {
   }
 }
 
-//** Create objects container */
-function createObjectsContainer(option) {
-  if (local.values.objectsParameters == undefined) {
-    ObjectsContainer = local.values.addContainer("Objects parameters");
+//** Create tracks container */
+function createTracksContainer(option) {
+  if (local.values.tracksParameters == undefined) {
+    TracksContainer = local.values.addContainer("Tracks parameters");
   } else {
-    ObjectsContainer = local.values.objectsParameters;
+    TracksContainer = local.values.tracksParameters;
   }
 
   //** Add XYZ container & values */
-  xyzContainer = ObjectsContainer.addContainer("xyz");
-  for (i = 0; i < declaredObjects.length; i++) {
-    if (declaredObjects[i] !== undefined) {
+  xyzContainer = TracksContainer.addContainer("xyz");
+  for (i = 0; i < declaredTracks.length; i++) {
+    if (declaredTracks[i] !== undefined) {
       xyzParam[i] = xyzContainer.addPoint3DParameter(i, "xyz", 0, -20, 20);
       xyzParam[i].setAttribute("readonly", true);
     }
@@ -459,9 +459,9 @@ function createObjectsContainer(option) {
   xyzContainer.setCollapsed(true);
 
   //** Add AED container & values */
-  aedContainer = ObjectsContainer.addContainer("aed");
-  for (i = 0; i < declaredObjects.length; i++) {
-    if (declaredObjects[i] !== undefined) {
+  aedContainer = TracksContainer.addContainer("aed");
+  for (i = 0; i < declaredTracks.length; i++) {
+    if (declaredTracks[i] !== undefined) {
       aedParam[i] = aedContainer.addPoint3DParameter(i, "aed", 0);
       aedParam[i].setAttribute("readonly", true);
     }
@@ -469,9 +469,9 @@ function createObjectsContainer(option) {
   aedContainer.setCollapsed(true);
 
   //** Add gain container & values */
-  gainContainer = ObjectsContainer.addContainer("gain");
-  for (i = 0; i < declaredObjects.length; i++) {
-    if (declaredObjects[i] !== undefined) {
+  gainContainer = TracksContainer.addContainer("gain");
+  for (i = 0; i < declaredTracks.length; i++) {
+    if (declaredTracks[i] !== undefined) {
       gainParam[i] = gainContainer.addFloatParameter(i, "gain", 0, -60, 12);
       gainParam[i].setAttribute("readonly", true);
     }
@@ -479,18 +479,18 @@ function createObjectsContainer(option) {
   gainContainer.setCollapsed(true);
 }
 
-function deleteObjectsContainer() {
-  if (local.values.objectsParameters == undefined) {
-    ObjectsContainer = local.values.addContainer("Objects parameters");
+function deleteTracksContainer() {
+  if (local.values.tracksParameters == undefined) {
+    TracksContainer = local.values.addContainer("Tracks parameters");
   } else {
-    ObjectsContainer = local.values.objectsParameters;
+    TracksContainer = local.values.tracksParameters;
   }
 
-  for (i = 0; i < declaredObjects[declaredObjects.length - 1] + 1; i++) {
-    if (declaredObjects[i] !== undefined) {
-      ObjectsContainer.xyz.removeParameter(i);
-      ObjectsContainer.aed.removeParameter(i);
-      ObjectsContainer.gain.removeParameter(i);
+  for (i = 0; i < declaredTracks[declaredTracks.length - 1] + 1; i++) {
+    if (declaredTracks[i] !== undefined) {
+      TracksContainer.xyz.removeParameter(i);
+      TracksContainer.aed.removeParameter(i);
+      TracksContainer.gain.removeParameter(i);
     }
   }
 }
@@ -499,8 +499,8 @@ function deleteObjectsContainer() {
 function createCV(option) {
   existingCVs = root.customVariables.getItems();
   if (option == "initial") {
-    for (i = 0; i < declaredObjects[declaredObjects.length - 1] + 1; i++) {
-      if (declaredObjects[i] !== undefined) {
+    for (i = 0; i < declaredTracks[declaredTracks.length - 1] + 1; i++) {
+      if (declaredTracks[i] !== undefined) {
         trCV = root.customVariables.addItem();
         trCV.setName("/track/" + i);
         trCVxyz = trCV.variables.addItem("Point3D Parameter");
@@ -520,18 +520,18 @@ function createCV(option) {
       //      root.customVariables.removeItem(cVs[j].name);
     }
 
-    for (i = 0; i < declaredObjects.length; i++) {
+    for (i = 0; i < declaredTracks.length; i++) {
       cVindex = cVsNames.indexOf("_track_" + i);
       script.log(" CV in CVs index = " + cVindex + " for i = " + i);
       script.log("list of existing CVs : " + JSON.stringify(cVsNames));
-      if (declaredObjects[i] !== undefined) {
+      if (declaredTracks[i] !== undefined) {
         if (cVindex == -1) {
           trCV = root.customVariables.addItem();
           trCV.setName("/track/" + i);
           trCVxyz = trCV.variables.addItem("Point3D Parameter");
           trCVxyz.setName("/xyz");
           createParamReferenceTo(
-            "/modules/holophonix/values/objectsParameters/xyz/" + i,
+            "/modules/holophonix/values/tracksParameters/xyz/" + i,
             "/customVariables/_track_" + i + "/variables/_xyz/_xyz"
           );
           //** Add corresponding mappings to states * /
@@ -577,7 +577,7 @@ function createCV(option) {
                   niceName: "MappingOutput",
                   type: "BaseItem",
                   commandModule: "holophonix",
-                  commandPath: "Set objects",
+                  commandPath: "Set tracks",
                   commandType: "Send xyz",
                   command: {
                     parameters: [
@@ -603,7 +603,7 @@ function createCV(option) {
           trCVaed = trCV.variables.addItem("Point3D Parameter");
           trCVaed.setName("/aed");
           createParamReferenceTo(
-            "/modules/holophonix/values/objectsParameters/aed/" + i,
+            "/modules/holophonix/values/tracksParameters/aed/" + i,
             "/customVariables/_track_" + i + "/variables/_aed/_aed"
           );
           ObjectStateAED = root.states.aedStates.processors.addItem("Mapping");
@@ -648,7 +648,7 @@ function createCV(option) {
                   niceName: "MappingOutput",
                   type: "BaseItem",
                   commandModule: "holophonix",
-                  commandPath: "Set objects",
+                  commandPath: "Set tracks",
                   commandType: "Send aed",
                   command: {
                     parameters: [
@@ -674,7 +674,7 @@ function createCV(option) {
           trCVgain = trCV.variables.addItem("Float Parameter");
           trCVgain.setName("/gain");
           createParamReferenceTo(
-            "/modules/holophonix/values/objectsParameters/gain/" + i,
+            "/modules/holophonix/values/tracksParameters/gain/" + i,
             "/customVariables/_track_" + i + "/variables/_gain/_gain"
           );
           ObjectStateGain =
@@ -720,7 +720,7 @@ function createCV(option) {
                   niceName: "MappingOutput",
                   type: "BaseItem",
                   commandModule: "holophonix",
-                  commandPath: "Set objects",
+                  commandPath: "Set tracks",
                   commandType: "Send gain",
                   command: {
                     parameters: [
@@ -750,8 +750,8 @@ function createCV(option) {
 }
 
 function deleteCVs() {
-  for (i = 0; i < declaredObjects.length; i++) {
-    if (declaredObjects[i] !== undefined) {
+  for (i = 0; i < declaredTracks.length; i++) {
+    if (declaredTracks[i] !== undefined) {
       root.customVariables.removeItem("/track/" + i);
       root.states.xyzStates.processors.removeItem("/track/" + i);
       root.states.aedStates.processors.removeItem("/track/" + i);
@@ -1022,49 +1022,48 @@ function createParamReferenceTo(toValue, fromParam) {
   });
 }
 
-function getDeclaredObjects() {
+function getDeclaredTracks() {
   for (k = 1; k < 129; k++) {
-    declaredObjects[k] = undefined;
+    declaredTracks[k] = undefined;
   }
-  objectsIDsDeclaration = local.parameters.objects.objectsIDs.get();
-  if (objectsIDsDeclaration.indexOf("-") > -1) {
-    tmpList = objectsIDsDeclaration.split("-");
+  tracksIDsDeclaration = local.parameters.controlledTracks.tracksIDs.get();
+  if (tracksIDsDeclaration.indexOf("-") > -1) {
+    tmpList = tracksIDsDeclaration.split("-");
     script.log("tmpList   " + JSON.stringify(tmpList));
-    declaredObjects[parseInt(tmpList[0])] = parseInt(tmpList[0]);
-    declaredObjects[parseInt(tmpList[1])] = parseInt(tmpList[1]);
+    declaredTracks[parseInt(tmpList[0])] = parseInt(tmpList[0]);
+    declaredTracks[parseInt(tmpList[1])] = parseInt(tmpList[1]);
 
     for (i = parseInt(tmpList[0]) + 1; i < parseInt(tmpList[1]); i++) {
-      declaredObjects[i] = i;
+      declaredTracks[i] = i;
     }
 
-    script.log(" objects list case 1 : " + JSON.stringify(declaredObjects));
-  } else if (objectsIDsDeclaration.indexOf(",") > -1) {
-    tmpList1 = objectsIDsDeclaration.split(",");
+    script.log(" tracks list case 1 : " + JSON.stringify(declaredTracks));
+  } else if (tracksIDsDeclaration.indexOf(",") > -1) {
+    tmpList1 = tracksIDsDeclaration.split(",");
     script.log("tmpList1   " + JSON.stringify(tmpList1));
     for (i = 0; i < parseInt(tmpList1[tmpList1.length - 1]) + 1; i++) {
       if (tmpList1.indexOf(i) > -1) {
-        declaredObjects[i] = i;
+        declaredTracks[i] = i;
       }
     }
-    script.log(" objects list case 2 : " + JSON.stringify(declaredObjects));
+    script.log(" tracks list case 2 : " + JSON.stringify(declaredTracks));
   } else {
-    declaredObjects[parseInt(objectsIDsDeclaration)] = parseInt(
-      objectsIDsDeclaration
-    );
-    script.log(" objects list case 3 : " + JSON.stringify(declaredObjects));
+    declaredTracks[parseInt(tracksIDsDeclaration)] =
+      parseInt(tracksIDsDeclaration);
+    script.log(" tracks list case 3 : " + JSON.stringify(declaredTracks));
   }
 }
 
-function updateObjectsList() {
+function updateTracksList() {
   for (i = 0; i < 129; i++) {
-    if (local.values.objectsParameters.xyz) {
+    if (local.values.tracksParameters.xyz) {
       if (root.customVariables.getChild("_track_" + i)) {
-        objectsList[i] = i;
+        tracksList[i] = i;
       }
     }
   }
 }
 
-//if (local.values.objectsParameters.xyz) {
-//  updateObjectsList();
+//if (local.values.tracksParameters.xyz) {
+//  updateTracksList();
 //}

@@ -34,16 +34,16 @@
 		}
 	},
 	"parameters": {
-		"Objects": {
+		"Controlled Tracks": {
 			"type": "Container",
-			"Objects IDs": {
-				"description": "IDs of objects to add.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
+			"Tracks IDs": {
+				"description": "IDs of tracks to control.\n\n Can be formatted as single Object(ex: 15), range(ex: 8-13) \n\n or list(ex: 2,4,12,20)\n",
 				"type": "String"
 			},
-			"Add Objects": {
+			"Add Tracks": {
 				"type": "Trigger"
 			},
-			"Delete Objects": {
+			"Delete Tracks": {
 				"type": "Trigger"
 			}
 		},
@@ -59,17 +59,17 @@
 				"type": "Trigger"
 			},
 			"Auto XYZ positions Request": {
-				"description": "Update automatically objects container values.\n",
+				"description": "Update automatically tracks container values.\n",
 				"type": "Boolean",
 				"default": false
 			},
 			"Auto AED positions Request": {
-				"description": "Update automatically objects container values.\n",
+				"description": "Update automatically tracks container values.\n",
 				"type": "Boolean",
 				"default": false
 			},
 			"Auto Gain Request": {
-				"description": "Update automatically objects container values.\n",
+				"description": "Update automatically tracks container values.\n",
 				"type": "Boolean",
 				"default": false
 			},
@@ -115,7 +115,7 @@
 	"values": {},
 	"commands": {
 		"Send xyz": {
-			"menu": "Set objects",
+			"menu": "Set tracks",
 			"callback": "xyz",
 			"parameters": {
 				"Source index": {
@@ -139,7 +139,7 @@
 			}
 		},
 		"Send aed": {
-			"menu": "Set objects",
+			"menu": "Set tracks",
 			"callback": "aed",
 			"parameters": {
 				"Source index": {
@@ -163,7 +163,7 @@
 			}
 		},
 		"Send gain": {
-			"menu": "Set objects",
+			"menu": "Set tracks",
 			"callback": "gain",
 			"parameters": {
 				"Source index": {
@@ -179,7 +179,7 @@
 			}
 		},
 		"Get xyz": {
-			"menu": "Get objects",
+			"menu": "Get tracks",
 			"callback": "getXYZ",
 			"parameters": {
 				"Source index": {
@@ -190,7 +190,7 @@
 			}
 		},
 		"Get aed": {
-			"menu": "Get objects",
+			"menu": "Get tracks",
 			"callback": "getAED",
 			"parameters": {
 				"Source index": {
@@ -201,7 +201,7 @@
 			}
 		},
 		"Get gain": {
-			"menu": "Get objects",
+			"menu": "Get tracks",
 			"callback": "getGain",
 			"parameters": {
 				"Source index": {
