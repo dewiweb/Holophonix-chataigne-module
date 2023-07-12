@@ -212,7 +212,7 @@ function moduleParameterChanged(param) {
     }
   }
 
-  if (param.is(local.parameters.manageCues.createGlobalCues)) {
+  if (param.is(local.parameters.manageCues.createCue)) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
   }
@@ -762,7 +762,7 @@ function deleteCVs() {
 
 //* Create a new preset */
 function createNewPreset() {
-  cuesNames = local.parameters.manageCues.globalCuesName.get();
+  cuesNames = local.parameters.manageCues.newCue_sName.get();
   listOfCues = root.states.cueTriggers.processors.getItems();
   cueName;
   cuesLength;
@@ -802,7 +802,7 @@ function createNewPreset() {
         } else {
           cueName = cuesNames + 1;
           iCV.setName(cueName);
-          local.parameters.manageCues.globalCuesName.set(cueName);
+          local.parameters.manageCues.newCue_sName.set(cueName);
         }
       } else {
         cueName = "Cue" + (cuesLength + 1);

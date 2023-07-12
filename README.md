@@ -25,9 +25,9 @@ To install the Custom Module, [download](https://github.com/dewiweb/Holophonix-c
 ## Principle of use
 
 - In "Rec Mode", you can record Global Cues (XYZ,AED and Gain values).
-- Record Cues generates associated Triggers (consequences TRUE of Cue Triggers).
-- To reload Cues you've got to disable "Rec Mode" to avoid IN/OUT data's loop, it disables OSC input and set AED,XYZ and Gain States as active.
-- Choose one kind of states you activate between aed states and xyz states .Send both kind of coordinates simultaneously is not recommended.
+- "Create Cue" generates associated Triggers (consequences TRUE of Cue Triggers).
+- To reload Cues you've got to uncheck "Rec Mode" to avoid IN/OUT data's loop, it disables OSC input and set AED,XYZ and Gain States as active.
+- Choose one kind of states you activate between "aed states" and "xyz states" .Send both kind of coordinates simultaneously is not recommended.
 - You can set interpolation's curve and time per-track if needed.
 
 ## Additional Features

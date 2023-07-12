@@ -88,10 +88,10 @@
 				"type": "Boolean",
 				"default": true
 			},
-			"Create Global Cues": {
+			"Create Cue": {
 				"type": "Trigger"
 			},
-			"Global Cues Name": {
+			"New Cue's Name": {
 				"description": "Set a specific Name (Default = Cue)",
 				"type": "String"
 			},
