@@ -23,7 +23,7 @@ var declaredObjects = [];
 var lastSendTime = 0;
 var requestSendRate; //in milliseconds
 var option = "initial";
-var recMode = local.parameters.recordCues.recMode.get();
+var recMode = local.parameters.manageCues.recMode.get();
 
 /**
  * Module initialization
@@ -157,9 +157,9 @@ function init() {
   } else {
     cueListState = root.states.getChild("Cue Triggers");
     cueList = cueListState.processors.getItems();
-    if (local.parameters.recordCues.selectCue.getAllOptions() == null) {
+    if (local.parameters.manageCues.selectCue.getAllOptions() == null) {
       for (i = 0; i < cueList.length; i++) {
-        local.parameters.recordCues.selectCue.addOption(
+        local.parameters.manageCues.selectCue.addOption(
           cueList[i].name,
           cueList[i].name
         );
@@ -184,8 +184,8 @@ function moduleParameterChanged(param) {
       requestSendRate = local.parameters.requestValues.autoRequestRate.get();
       script.setUpdateRate(5000);
     }
-    if (param.is(local.parameters.recordCues.recMode)) {
-      recMode = local.parameters.recordCues.recMode.get();
+    if (param.is(local.parameters.manageCues.recMode)) {
+      recMode = local.parameters.manageCues.recMode.get();
       script.log("recMode changed to : " + recMode);
       if (recMode == 0) {
         local.parameters.oscInput.enabled.set(false);
@@ -212,7 +212,7 @@ function moduleParameterChanged(param) {
     }
   }
 
-  if (param.is(local.parameters.recordCues.createGlobalCues)) {
+  if (param.is(local.parameters.manageCues.createGlobalCues)) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
   }
@@ -258,7 +258,7 @@ function moduleParameterChanged(param) {
   }
   if (param.name == "reloadCue") {
     root.states.cueTriggers.active.set(1);
-    cueToReload = local.parameters.recordCues.selectCue.get();
+    cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
       root.states.cueTriggers.processors.getItemWithName(cueToReload).conditions
         .manual.active;
@@ -267,16 +267,16 @@ function moduleParameterChanged(param) {
     manualAction.set(0);
   }
   if (param.name == "deleteCue") {
-    cueToDelete = local.parameters.recordCues.selectCue.get();
+    cueToDelete = local.parameters.manageCues.selectCue.get();
     //script.log("Cue to delete : " + cueToDelete);
     toDelete = root.states.cueTriggers.processors.getItemWithName(cueToDelete);
-    allCues = local.parameters.recordCues.selectCue.getAllOptions();
+    allCues = local.parameters.manageCues.selectCue.getAllOptions();
     //script.log("all options : " + JSON.stringify(allCues));
-    local.parameters.recordCues.selectCue.removeOptions();
+    local.parameters.manageCues.selectCue.removeOptions();
     for (i = 0; i < allCues.length; i++) {
       //script.log("i key : " + allCues[i].key);
       if (allCues[i].key !== cueToDelete) {
-        local.parameters.recordCues.selectCue.addOption(
+        local.parameters.manageCues.selectCue.addOption(
           allCues[i].key,
           allCues[i].key
         );
@@ -290,6 +290,16 @@ function moduleParameterChanged(param) {
     for (var j = 0; j < cVs.length; j++) {
       if (cVs[j].presets.getItemWithName(cueToDelete) !== undefined) {
         cVs[j].presets.removeItem(cueToDelete);
+      }
+    }
+  }
+  if (param.name == "updateCue") {
+    cueToUpdate = local.parameters.manageCues.selectCue.get();
+    cVs = root.customVariables.getItems();
+    for (var j = 0; j < cVs.length; j++) {
+      if (cVs[j].presets.getItemWithName(cueToUpdate) !== undefined) {
+        cVs[j].presets.getItemWithName(cueToUpdate).update.trigger();
+        //cVs[j].presets.getItemWithName(cueToUpdate).update = 0;
       }
     }
   }
@@ -752,7 +762,7 @@ function deleteCVs() {
 
 //* Create a new preset */
 function createNewPreset() {
-  cuesNames = local.parameters.recordCues.globalCuesName.get();
+  cuesNames = local.parameters.manageCues.globalCuesName.get();
   listOfCues = root.states.cueTriggers.processors.getItems();
   cueName;
   cuesLength;
@@ -792,7 +802,7 @@ function createNewPreset() {
         } else {
           cueName = cuesNames + 1;
           iCV.setName(cueName);
-          local.parameters.recordCues.globalCuesName.set(cueName);
+          local.parameters.manageCues.globalCuesName.set(cueName);
         }
       } else {
         cueName = "Cue" + (cuesLength + 1);
@@ -909,7 +919,7 @@ function createNewPreset() {
 
   //script.log("  list of existing Cues: " + listOfCues);
   if (listOfCues[listOfCues.length - 1].name !== cueName) {
-    local.parameters.recordCues.selectCue.addOption(cueName, cueName);
+    local.parameters.manageCues.selectCue.addOption(cueName, cueName);
   }
 }
 

@@ -81,7 +81,7 @@
 				"max": 10000
 			}
 		},
-		"Record Cues": {
+		"Manage Cues": {
 			"type": "Container",
 			"Rec Mode": {
 				"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
@@ -92,13 +92,16 @@
 				"type": "Trigger"
 			},
 			"Global Cues Name": {
-				"description": "Set a specific Name",
+				"description": "Set a specific Name (Default = Cue)",
 				"type": "String"
 			},
 			"Select Cue": {
 				"type": "Enum"
 			},
 			"Reload Cue": {
+				"type": "Trigger"
+			},
+			"Update Cue": {
 				"type": "Trigger"
 			},
 			"Delete Cue": {
