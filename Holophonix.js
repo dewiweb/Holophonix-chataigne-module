@@ -65,6 +65,8 @@ function init() {
         viewZoom: 1.0,
       },
     });
+  } else {
+    root.states.getChild("XYZ states").active.set(0);
   }
 
   if (root.states.getChild("AED states") == undefined) {
@@ -93,6 +95,8 @@ function init() {
         viewZoom: 1.0,
       },
     });
+  } else {
+    root.states.getChild("AED states").active.set(0);
   }
 
   if (root.states.getChild("Gain states") == undefined) {
@@ -121,6 +125,8 @@ function init() {
         viewZoom: 1.0,
       },
     });
+  } else {
+    root.states.getChild("Gain states").active.set(0);
   }
 
   if (root.states.getChild("Cue Triggers") == undefined) {
@@ -154,7 +160,7 @@ function init() {
       },
     });
   }
-
+  local.parameters.manageCues.recMode.set(1);
   populateCueList();
   updateTracksList();
 }
@@ -398,6 +404,13 @@ function oscEvent(address, args) {
 function update() {
   var t = util.getTime();
   if (t > lastSendTime + requestSendRate / 1000) {
+    if (reinitialize == 0) {
+      local.parameters.manageCues.recMode.set(1);
+      local.parameters.oscInput.enabled.set(true);
+      root.states.xyzStates.active.set(false);
+      root.states.aedStates.active.set(false);
+      root.states.gainStates.active.set(false);
+    }
     if (reinitialize < 3) {
       if (reinitialize == 1) {
         populateCueList();
