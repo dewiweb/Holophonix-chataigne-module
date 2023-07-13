@@ -43,32 +43,16 @@
 			"Add Tracks": {
 				"type": "Trigger"
 			},
-			"Delete Tracks": {
+			"Remove Tracks": {
 				"type": "Trigger"
 			}
 		},
 		"Request Values": {
 			"type": "Container",
-			"Manual XYZ positions Request": {
+			"Manual Request": {
 				"type": "Trigger"
 			},
-			"Manual AED positions Request": {
-				"type": "Trigger"
-			},
-			"Manual Gain Request": {
-				"type": "Trigger"
-			},
-			"Auto XYZ positions Request": {
-				"description": "Update automatically tracks container values.\n",
-				"type": "Boolean",
-				"default": false
-			},
-			"Auto AED positions Request": {
-				"description": "Update automatically tracks container values.\n",
-				"type": "Boolean",
-				"default": false
-			},
-			"Auto Gain Request": {
+			"Auto Request": {
 				"description": "Update automatically tracks container values.\n",
 				"type": "Boolean",
 				"default": false

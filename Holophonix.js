@@ -33,9 +33,7 @@ function init() {
   // Setup default reception update rate and get update states as in module GUI
   requestSendRate = local.parameters.requestValues.autoRequestRate.get();
   script.setUpdateRate(5000);
-  getTracksXYZ = local.parameters.requestValues.autoXYZPositionsRequest.get();
-  getTracksAED = local.parameters.requestValues.autoAEDPositionsRequest.get();
-  getTracksGain = local.parameters.requestValues.autoGainRequest.get();
+  getTracksValues = local.parameters.requestValues.autoRequest.get();
   tracksIDsDeclaration = local.parameters.controlledTracks.tracksIDs.get();
   updateTracksList();
   // Module GUI settings
@@ -207,14 +205,8 @@ function moduleParameterChanged(param) {
       script.log("oscInput  : " + local.parameters.oscInput.enabled);
     }
     // handling of "get" parameters settings changes
-    if (param.is(local.parameters.requestValues.autoXYZPositionsRequest)) {
-      getTracksXYZ = param.get();
-    }
-    if (param.is(local.parameters.requestValues.autoAEDPositionsRequest)) {
-      getTracksAED = param.get();
-    }
-    if (param.is(local.parameters.requestValues.autoGainRequest)) {
-      getTracksGain = param.get();
+    if (param.is(local.parameters.requestValues.autoRequest)) {
+      getTracksValues = param.get();
     }
   }
 
@@ -231,32 +223,22 @@ function moduleParameterChanged(param) {
     createTracksContainer();
     createCV();
   }
-  if (param.name == "deleteTracks") {
+  if (param.name == "removeTracks") {
     getDeclaredTracks();
     script.log("declared tracks are :" + tracksList);
     //updateTracksList();
-    deleteTracksContainer();
+    removeTracksContainer();
     deleteCVs();
   }
-  if (param.name == "manualXYZPositionsRequest") {
+  if (param.name == "manualRequest") {
     updateTracksList();
     for (i = 0; i < tracksList.length; i++) {
       if (local.values.tracksParameters.xyz.getChild(i) !== undefined) {
         getXYZ(i);
       }
-    }
-  }
-  if (param.name == "manualAEDPositionsRequest") {
-    updateTracksList();
-    for (i = 0; i < tracksList.length; i++) {
       if (local.values.tracksParameters.aed.getChild(i) !== undefined) {
         getAED(i);
       }
-    }
-  }
-  if (param.name == "manualGainRequest") {
-    updateTracksList();
-    for (i = 0; i < tracksList.length; i++) {
       if (local.values.tracksParameters.gain.getChild(i) !== undefined) {
         getGain(i);
       }
@@ -424,25 +406,15 @@ function update() {
       reinitialize = reinitialize + 1;
     }
     // Sends commands to retrieve values, at specified updateRate.
-    if (getTracksXYZ) {
+    if (getTracksValues) {
       updateTracksList();
       for (i = 0; i < tracksList.length; i++) {
         if (local.values.tracksParameters.xyz.getChild(i) !== undefined) {
           getXYZ(i);
         }
-      }
-    }
-    if (getTracksAED) {
-      updateTracksList();
-      for (i = 0; i < tracksList.length; i++) {
         if (local.values.tracksParameters.aed.getChild(i) !== undefined) {
           getAED(i);
         }
-      }
-    }
-    if (getTracksGain) {
-      updateTracksList();
-      for (i = 0; i < tracksList.length; i++) {
         if (local.values.tracksParameters.gain.getChild(i) !== undefined) {
           getGain(i);
         }
@@ -492,7 +464,7 @@ function createTracksContainer(option) {
   gainContainer.setCollapsed(true);
 }
 
-function deleteTracksContainer() {
+function removeTracksContainer() {
   if (local.values.tracksParameters == undefined) {
     TracksContainer = local.values.addContainer("Tracks parameters");
   } else {
