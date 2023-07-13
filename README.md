@@ -51,8 +51,3 @@ And send manually queries commands :
 - getAED(sourceIndex)
 - getXYZ(sourceIndex)
 - getGain(sourceIndex)
-
-## Known issues
-
-- Cues List is not updated in "Select Cue" enum field at module relaunch.
-- Controlled Tracks List is not updated at relaunch (re-check "Add Tracks" to update the List as workaround)
