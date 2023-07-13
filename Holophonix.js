@@ -17,6 +17,7 @@ var aedParam = [];
 var gainParam = [];
 
 var tracksList = [];
+var reinitialize = 0;
 
 var tracksIDsDeclaration;
 var declaredTracks = [];
@@ -154,10 +155,20 @@ function init() {
         viewZoom: 1.0,
       },
     });
-  } else {
-    cueListState = root.states.getChild("Cue Triggers");
-    cueList = cueListState.processors.getItems();
-    if (local.parameters.manageCues.selectCue.getAllOptions() == null) {
+  }
+
+  populateCueList();
+  updateTracksList();
+}
+
+function populateCueList() {
+  if (root.states.getChild("Cue Triggers")) {
+    if (
+      root.modules.holophonix.parameters.manageCues.selectCue.getAllOptions() ==
+      undefined
+    ) {
+      cueListState = root.states.getChild("Cue Triggers");
+      cueList = cueListState.processors.getItems();
       for (i = 0; i < cueList.length; i++) {
         local.parameters.manageCues.selectCue.addOption(
           cueList[i].name,
@@ -165,12 +176,7 @@ function init() {
         );
       }
     }
-    script.log(
-      "cue list : " + JSON.stringify(cueListState.processors.getItems())
-    );
   }
-
-  updateTracksList();
 }
 
 /**
@@ -336,7 +342,7 @@ function oscEvent(address, args) {
     var objectID = parseInt(address[2]);
     if (tracksList !== undefined) {
       if (tracksList.indexOf(objectID) == -1) {
-        script.logWarning("Received not handled object number #" + objectID);
+        script.logWarning("Received not handled object number : " + objectID);
         return;
       }
 
@@ -410,6 +416,13 @@ function oscEvent(address, args) {
 function update() {
   var t = util.getTime();
   if (t > lastSendTime + requestSendRate / 1000) {
+    if (reinitialize < 3) {
+      if (reinitialize == 1) {
+        populateCueList();
+      }
+      updateTracksList();
+      reinitialize = reinitialize + 1;
+    }
     // Sends commands to retrieve values, at specified updateRate.
     if (getTracksXYZ) {
       updateTracksList();
@@ -513,19 +526,19 @@ function createCV(option) {
     }
     option = "";
   } else {
-    cVsNames = [];
+    CVsNames = [];
     cVs = root.customVariables.getItems();
     for (var j = 0; j < cVs.length; j++) {
-      cVsNames.push(cVs[j].name);
+      CVsNames.push(cVs[j].name);
       //      root.customVariables.removeItem(cVs[j].name);
     }
 
     for (i = 0; i < declaredTracks.length; i++) {
-      cVindex = cVsNames.indexOf("_track_" + i);
-      script.log(" CV in CVs index = " + cVindex + " for i = " + i);
-      script.log("list of existing CVs : " + JSON.stringify(cVsNames));
+      CVindex = CVsNames.indexOf("_track_" + i);
+      script.log(" CV in CVs index = " + CVindex + " for i = " + i);
+      script.log("list of existing CVs : " + JSON.stringify(CVsNames));
       if (declaredTracks[i] !== undefined) {
-        if (cVindex == -1) {
+        if (CVindex == -1) {
           trCV = root.customVariables.addItem();
           trCV.setName("/track/" + i);
           trCVxyz = trCV.variables.addItem("Point3D Parameter");
@@ -1021,6 +1034,7 @@ function createParamReferenceTo(toValue, fromParam) {
     ],
   });
 }
+cue;
 
 function getDeclaredTracks() {
   for (k = 1; k < 129; k++) {
@@ -1059,6 +1073,31 @@ function updateTracksList() {
     if (local.values.tracksParameters.xyz) {
       if (root.customVariables.getChild("_track_" + i)) {
         tracksList[i] = i;
+        if (local.values.tracksParameters.xyz.getChild(i)) {
+        } else {
+          xyzParam[i] = local.values.tracksParameters.xyz.addPoint3DParameter(
+            i,
+            "xyz",
+            0,
+            -20,
+            20
+          );
+          xyzParam[i].setAttribute("readonly", true);
+          aedParam[i] = local.values.tracksParameters.aed.addPoint3DParameter(
+            i,
+            "aed",
+            0
+          );
+          aedParam[i].setAttribute("readonly", true);
+          gainParam[i] = local.values.tracksParameters.gain.addFloatParameter(
+            i,
+            "gain",
+            0,
+            -60,
+            12
+          );
+          gainParam[i].setAttribute("readonly", true);
+        }
       }
     }
   }
