@@ -3,7 +3,7 @@
 	"type": "OSC",
 	"path": "Spatial Audio",
 	"version": "1.2",
-	"description": "Chataigne Module specific documentation can be found in the README on GitHub: ",
+	"description": "Module to interact with [Holophonix](https://holophonix.xyz) spatial audio processor. Main purpose is to create Cues(or scenes) of tracks 3D positions(XYZ or AED) and Gains to reload them similar a lighting Cues logic.\n\n Chataigne Module specific documentation can be found in the README on GitHub: ",
 	"url": "https://github.com/dewiweb/Holophonix_chataigne_module",
 	"downloadURL": "https://github.com/dewiweb/Holophonix-chataigne-module/archive/refs/heads/main.zip",
 	"hasInput": true,
