@@ -161,14 +161,15 @@ function init() {
     });
   }
   local.parameters.manageCues.recMode.set(1);
-  populateCueList();
+  //populateCueList();
   updateTracksList();
 }
 
 function populateCueList() {
   if (root.states.getChild("Cue Triggers")) {
     if (
-      root.modules.holophonix.parameters.manageCues.selectCue.getAllOptions()
+      root.modules.holophonix.parameters.manageCues.selectCue.get() !==
+      undefined
     ) {
     } else {
       cueListState = root.states.getChild("Cue Triggers");
