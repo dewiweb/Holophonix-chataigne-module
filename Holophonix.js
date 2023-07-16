@@ -168,10 +168,8 @@ function init() {
 function populateCueList() {
   if (root.states.getChild("Cue Triggers")) {
     if (
-      root.modules.holophonix.parameters.manageCues.selectCue.get() !==
-      undefined
+      root.modules.holophonix.parameters.manageCues.selectCue.get() == undefined
     ) {
-    } else {
       cueListState = root.states.getChild("Cue Triggers");
       cueList = cueListState.processors.getItems();
       for (i = 0; i < cueList.length; i++) {
