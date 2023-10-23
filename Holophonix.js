@@ -295,6 +295,9 @@ function moduleParameterChanged(param) {
         cVs[j].presets.getItemWithName(cueToUpdate).update.trigger();
         //cVs[j].presets.getItemWithName(cueToUpdate).update = 0;
       }
+      else{
+        //ToDo: populate track's preset with cue's name if track didn't exist before! 
+      }
     }
   }
 }
