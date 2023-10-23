@@ -129,9 +129,9 @@ function init() {
     root.states.getChild("Gain states").active.set(0);
   }
 
-  if (root.states.getChild("Cue Triggers") == undefined) {
-    cueTriggers = root.states.addItem();
-    cueTriggers.loadJSONData({
+  if (root.states.getChild("Cues") == undefined) {
+    cues = root.states.addItem();
+    cues.loadJSONData({
       parameters: [
         {
           value: [-500.0, 250.0],
@@ -152,14 +152,14 @@ function init() {
           controlAddress: "/active",
         },
       ],
-      niceName: "Cue Triggers",
+      niceName: "Cues",
       type: "State",
       processors: {
         viewOffset: [0, 0],
         viewZoom: 1.0,
       },
     });
-    cuesConductor = root.states.cueTriggers.processors.addItem("Conductor");
+    cuesConductor = root.states.cues.processors.addItem("Conductor");
   }
   local.parameters.manageCues.recMode.set(1);
   //populateCueList();
@@ -167,11 +167,11 @@ function init() {
 }
 
 function populateCueList() {
-  if (root.states.getChild("Cue Triggers")) {
+  if (root.states.getChild("Cues")) {
     if (
       root.modules.holophonix.parameters.manageCues.selectCue.get() == undefined
     ) {
-      cueListState = root.states.getChild("Cue Triggers");
+      cueListState = root.states.getChild("Cues");
       cueList = cueListState.processors.conductor.processors.getItems();
       for (i = 0; i < cueList.length; i++) {
         local.parameters.manageCues.selectCue.addOption(
@@ -251,10 +251,10 @@ function moduleParameterChanged(param) {
     }
   }
   if (param.name == "reloadCue") {
-    root.states.cueTriggers.active.set(1);
+    root.states.cues.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
-      root.states.cueTriggers.processors.conductor.processors.getItemWithName(cueToReload).conditions
+      root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions
         .manual.active;
     script.log("Manual action = " + manualAction);
     manualAction.set(1);
@@ -263,7 +263,7 @@ function moduleParameterChanged(param) {
   if (param.name == "deleteCue") {
     cueToDelete = local.parameters.manageCues.selectCue.get();
     //script.log("Cue to delete : " + cueToDelete);
-    toDelete = root.states.cueTriggers.processors.conductor.processors.getItemWithName(cueToDelete);
+    toDelete = root.states.cues.processors.conductor.processors.getItemWithName(cueToDelete);
     allCues = local.parameters.manageCues.selectCue.getAllOptions();
     //script.log("all options : " + JSON.stringify(allCues));
     local.parameters.manageCues.selectCue.removeOptions();
@@ -278,7 +278,7 @@ function moduleParameterChanged(param) {
       }
     }
 
-    root.states.cueTriggers.processors.conductor.processors.removeItem(toDelete);
+    root.states.cues.processors.conductor.processors.removeItem(toDelete);
 
     cVs = root.customVariables.getItems();
     for (var j = 0; j < cVs.length; j++) {
@@ -761,12 +761,12 @@ function deleteCVs() {
 //* Create a new preset */
 function createNewPreset() {
   cuesNames = local.parameters.manageCues.newCue_sName.get();
-//  listOfCues = root.states.cueTriggers.processors.getItems();
-  listOfCues = root.states.cueTriggers.processors.conductor.processors.getItems();
+//  listOfCues = root.states.cues.processors.getItems();
+  listOfCues = root.states.cues.processors.conductor.processors.getItems();
   cueName;
   cuesLength;
-//  cueTrigger = root.states.cueTriggers.processors.addItem("Action");
-  cueAdded = root.states.cueTriggers.processors.conductor.processors.addItem("Cue");
+//  cueTrigger = root.states.cues.processors.addItem("Action");
+  cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
   script.log(
     "createNewPreset Triggered!!  CuesNames ==" +
       cuesNames +
@@ -813,7 +813,7 @@ function createNewPreset() {
 
       actionName = "/_track_" + i + "/presets/" + cueName;
       //**Add a Trigger to load created preset
-      triggerConsequence = root.states.cueTriggers.processors.conductor.processors
+      triggerConsequence = root.states.cues.processors.conductor.processors
         .getItemWithName(cueName)
         .consequencesTRUE.addItem("Consequence");
       triggerConsequence.loadJSONData({
@@ -915,7 +915,7 @@ function createNewPreset() {
       });
     }
   }
-  triggerManual = root.states.cueTriggers.processors.conductor.processors
+  triggerManual = root.states.cues.processors.conductor.processors
     .getItemWithName(cueName)
     .conditions.addItem("Manual");
 
