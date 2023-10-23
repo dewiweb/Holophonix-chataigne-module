@@ -159,6 +159,7 @@ function init() {
         viewZoom: 1.0,
       },
     });
+    cuesConductor = root.states.cueTriggers.processors.addItem("Conductor");
   }
   local.parameters.manageCues.recMode.set(1);
   //populateCueList();
@@ -171,7 +172,7 @@ function populateCueList() {
       root.modules.holophonix.parameters.manageCues.selectCue.get() == undefined
     ) {
       cueListState = root.states.getChild("Cue Triggers");
-      cueList = cueListState.processors.getItems();
+      cueList = cueListState.processors.conductor.processors.getItems();
       for (i = 0; i < cueList.length; i++) {
         local.parameters.manageCues.selectCue.addOption(
           cueList[i].name,
@@ -253,7 +254,7 @@ function moduleParameterChanged(param) {
     root.states.cueTriggers.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
-      root.states.cueTriggers.processors.getItemWithName(cueToReload).conditions
+      root.states.cueTriggers.processors.conductor.processors.getItemWithName(cueToReload).conditions
         .manual.active;
     script.log("Manual action = " + manualAction);
     manualAction.set(1);
@@ -262,7 +263,7 @@ function moduleParameterChanged(param) {
   if (param.name == "deleteCue") {
     cueToDelete = local.parameters.manageCues.selectCue.get();
     //script.log("Cue to delete : " + cueToDelete);
-    toDelete = root.states.cueTriggers.processors.getItemWithName(cueToDelete);
+    toDelete = root.states.cueTriggers.processors.conductor.processors.getItemWithName(cueToDelete);
     allCues = local.parameters.manageCues.selectCue.getAllOptions();
     //script.log("all options : " + JSON.stringify(allCues));
     local.parameters.manageCues.selectCue.removeOptions();
@@ -277,7 +278,7 @@ function moduleParameterChanged(param) {
       }
     }
 
-    root.states.cueTriggers.processors.removeItem(toDelete);
+    root.states.cueTriggers.processors.conductor.processors.removeItem(toDelete);
 
     cVs = root.customVariables.getItems();
     for (var j = 0; j < cVs.length; j++) {
@@ -760,10 +761,12 @@ function deleteCVs() {
 //* Create a new preset */
 function createNewPreset() {
   cuesNames = local.parameters.manageCues.newCue_sName.get();
-  listOfCues = root.states.cueTriggers.processors.getItems();
+//  listOfCues = root.states.cueTriggers.processors.getItems();
+  listOfCues = root.states.cueTriggers.processors.conductor.processors.getItems();
   cueName;
   cuesLength;
-  cueTrigger = root.states.cueTriggers.processors.addItem("Action");
+//  cueTrigger = root.states.cueTriggers.processors.addItem("Action");
+  cueAdded = root.states.cueTriggers.processors.conductor.processors.addItem("Cue");
   script.log(
     "createNewPreset Triggered!!  CuesNames ==" +
       cuesNames +
@@ -805,10 +808,12 @@ function createNewPreset() {
         cueName = "Cue" + (cuesLength + 1);
         iCV.setName("Cue" + (cuesLength + 1));
       }
-      cueTrigger.setName(cueName);
+    //  cueTrigger.setName(cueName);
+      cueAdded.setName(cueName);
+
       actionName = "/_track_" + i + "/presets/" + cueName;
       //**Add a Trigger to load created preset
-      triggerConsequence = root.states.cueTriggers.processors
+      triggerConsequence = root.states.cueTriggers.processors.conductor.processors
         .getItemWithName(cueName)
         .consequencesTRUE.addItem("Consequence");
       triggerConsequence.loadJSONData({
@@ -910,7 +915,7 @@ function createNewPreset() {
       });
     }
   }
-  triggerManual = root.states.cueTriggers.processors
+  triggerManual = root.states.cueTriggers.processors.conductor.processors
     .getItemWithName(cueName)
     .conditions.addItem("Manual");
 
