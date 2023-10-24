@@ -22,14 +22,14 @@ To install the Custom Module, [download](https://github.com/dewiweb/Holophonix-c
   - range of numbers (ex: 5-15)
   - list of numbers (ex: 3,12,89,45)
 
-## Principle of use
+## How of use it!
 
 - In "Rec Mode", you can record/reload/update or delete Global Cues (XYZ,AED and Gain values).
 - If you don't specify a custom name for new created Cue, "Cue" + number is set by default.
-- Be sure to send "Request" (XYZ,AED and Gain) to Holophonix processor BEFORE record or update a Cue (manually or automatically)
-- "Create Cue" generates associated Triggers (consequences TRUE of Cue Triggers). You can use these triggers to reload Cues.
-- To reload Cues you've got to uncheck "Rec Mode" before to avoid IN/OUT data's loop, it disables OSC input and set AED,XYZ and Gain States as active.
-- BE CAREFUL! You've got to choose which kind of states you stay activated between "XYZ states" and "AED states". Send both kind of coordinates simultaneously is not really recommended.
+- Be sure to send a "Request" about XYZ,AED and Gain values to Holophonix processor BEFORE record or update a Cue (manually or automatically)
+- "Create Cue" generates associated Cue (consequences TRUE of Cues). You can use these triggers to reload Cues.
+- To reload Cues you've got to uncheck "Rec Mode" before to avoid I/O data's loop, it disables OSC input and set AED or XYZ and Gain Outputs as active.
+- BE CAREFUL! You've got to choose which kind of states you stay activated between "XYZ Outputs" and "AED Outputs". Send both kind of coordinates simultaneously is not really recommended.
 - You can also set custom interpolation's curves and times per-track if needed (Default is set to "Bezier" and "5 seconds").
 
 ## Additional Features
