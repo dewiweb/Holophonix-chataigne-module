@@ -783,7 +783,7 @@ function deleteCVs() {
 }
 
 //* Create a new preset */
-function createNewPreset() {
+function createNewPreset() {if(local.parameters.manageCues.recMode.get() == true){
   cuesNames = local.parameters.manageCues.newCue_sName.get();
 //  listOfCues = root.states.cues.processors.getItems();
   listOfCues = root.states.cues.processors.conductor.processors.getItems();
@@ -948,7 +948,7 @@ function createNewPreset() {
   if (listOfCues[listOfCues.length - 1].name !== cueName) {
     local.parameters.manageCues.selectCue.addOption(cueName, cueName);
   }
-}
+}}
 
 //**
 //* Callback functions for module commands
