@@ -272,7 +272,7 @@ function moduleParameterChanged(param) {
     }
   }
   if (param.name == "reloadCue") {
-    root.states.cues.active.set(1);
+
     root.states.cues.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
@@ -789,8 +789,6 @@ function createNewPreset() {
   listOfCues = root.states.cues.processors.conductor.processors.getItems();
   cueName;
   cuesLength;
-//  cueTrigger = root.states.cues.processors.addItem("Action");
-  cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
 //  cueTrigger = root.states.cues.processors.addItem("Action");
   cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
   script.log(
