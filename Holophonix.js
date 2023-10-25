@@ -49,7 +49,10 @@ function init() {
         },
         {
           value: [
-            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+            0.2627451121807098,
+            0.6274510025978088,
+            0.6431372761726379,
+            1.0,
           ],
           controlAddress: "/color",
         },
@@ -68,7 +71,6 @@ function init() {
   } else {
     root.states.getChild("XYZ Outputs").active.set(0);
   }
-
   if (root.states.getChild("AED Outputs") == undefined) {
     aedOutputs = root.states.addItem();
     aedOutputs.loadJSONData({
@@ -79,7 +81,10 @@ function init() {
         },
         {
           value: [
-            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+            0.2627451121807098,
+            0.6274510025978088,
+            0.6431372761726379,
+            1.0,
           ],
           controlAddress: "/color",
         },
@@ -98,7 +103,6 @@ function init() {
   } else {
     root.states.getChild("AED Outputs").active.set(0);
   }
-
   if (root.states.getChild("Gain Outputs") == undefined) {
     gainOutputs = root.states.addItem();
     gainOutputs.loadJSONData({
@@ -109,7 +113,10 @@ function init() {
         },
         {
           value: [
-            0.2627451121807098, 0.6274510025978088, 0.6431372761726379, 1.0,
+            0.2627451121807098,
+            0.6274510025978088,
+            0.6431372761726379,
+            1.0,
           ],
           controlAddress: "/color",
         },
@@ -138,7 +145,10 @@ function init() {
         },
         {
           value: [
-            0.6431372761726379, 0.2784313857555389, 0.5137255191802979, 1.0,
+            0.6431372761726379,
+            0.2784313857555389,
+            0.5137255191802979,
+            1.0,
           ],
           controlAddress: "/color",
         },
@@ -160,10 +170,6 @@ function init() {
     });
     cuesConductor = root.states.cues.processors.addItem("Conductor");
   }
-  //NEXT LINE MAKES CHATAIGNE CRASH!
-  //xyzORaed = root.states.transitions.addItem("Action");
-  //xyzORaed.sourceState = "xyzOutputs";
-  //xyzORaed.desState = "aedOutputs";
   root.states.addTransition("xyzOutputs", "aedOutputs");
   local.parameters.manageCues.recMode.set(1);
   //populateCueList();
@@ -203,20 +209,23 @@ function moduleParameterChanged(param) {
       script.log("recMode changed to : " + recMode);
       if (recMode == 0) {
         local.parameters.oscInput.enabled.set(false);
-        local.parameters.manageCues.coordMode.setAttribute("readOnly",false);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly", false);
         //local.parameters.manageCues.coordMode.setData("opt1");
         //root.states.xyzOutputs.active.set(true);
         //root.states.aedOutputs.active.set(true);
         root.states.gainOutputs.active.set(true);
-        script.log("coord mode is set to:",local.parameters.manageCues.coordMode.get());
-        if(local.parameters.manageCues.coordMode.get() =="opt1"){
+        script.log(
+          "coord mode is set to:",
+          local.parameters.manageCues.coordMode.get()
+        );
+        if (local.parameters.manageCues.coordMode.get() == "opt1") {
           root.states.aedOutputs.active.set(true);
-        }else{
+        } else {
           root.states.xyzOutputs.active.set(true);
         }
       } else {
         local.parameters.oscInput.enabled.set(true);
-        local.parameters.manageCues.coordMode.setAttribute("readOnly",true);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly", true);
         root.states.xyzOutputs.active.set(false);
         root.states.aedOutputs.active.set(false);
         root.states.gainOutputs.active.set(false);
@@ -230,13 +239,12 @@ function moduleParameterChanged(param) {
   }
   if (param.is(local.parameters.manageCues.coordMode)) {
     coordMode = local.parameters.manageCues.coordMode.get();
-    if (coordMode == "opt1"){
+    if (coordMode == "opt1") {
       root.states.aedOutputs.active.set(true);
-        }else{
-          root.states.xyzOutputs.active.set(true);
-        }
+    } else {
+      root.states.xyzOutputs.active.set(true);
     }
-
+  }
   if (param.is(local.parameters.manageCues.createCue)) {
     script.log("createNewPreset Triggered!!");
     createNewPreset();
@@ -272,11 +280,11 @@ function moduleParameterChanged(param) {
     }
   }
   if (param.name == "reloadCue") {
-
     root.states.cues.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
-    manualAction =
-      root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions.manual.active;
+    manualAction = root.states.cues.processors.conductor.processors.getItemWithName(
+      cueToReload
+    ).conditions.manual.active;
     script.log("Manual action = " + manualAction);
     manualAction.set(1);
     manualAction.set(0);
@@ -284,7 +292,9 @@ function moduleParameterChanged(param) {
   if (param.name == "deleteCue") {
     cueToDelete = local.parameters.manageCues.selectCue.get();
     //script.log("Cue to delete : " + cueToDelete);
-    toDelete = root.states.cues.processors.conductor.processors.getItemWithName(cueToDelete);
+    toDelete = root.states.cues.processors.conductor.processors.getItemWithName(
+      cueToDelete
+    );
     allCues = local.parameters.manageCues.selectCue.getAllOptions();
     //script.log("all options : " + JSON.stringify(allCues));
     local.parameters.manageCues.selectCue.removeOptions();
@@ -314,10 +324,8 @@ function moduleParameterChanged(param) {
     for (var j = 0; j < cVs.length; j++) {
       if (cVs[j].presets.getItemWithName(cueToUpdate) !== undefined) {
         cVs[j].presets.getItemWithName(cueToUpdate).update.trigger();
-        //cVs[j].presets.getItemWithName(cueToUpdate).update = 0;
-      }
-      else{
-        //ToDo: populate track's preset with cue's name if track didn't exist before! 
+      } else {
+        //ToDo: populate track's preset with cue's name if track didn't exist before!
       }
     }
   }
@@ -699,8 +707,9 @@ function createCV(option) {
             "/modules/holophonix/values/tracksParameters/gain/" + i,
             "/customVariables/_track_" + i + "/variables/_gain/_gain"
           );
-          ObjectStateGain =
-            root.states.gainOutputs.processors.addItem("Mapping");
+          ObjectStateGain = root.states.gainOutputs.processors.addItem(
+            "Mapping"
+          );
           ObjectStateGain.setName("/track/" + i);
           ObjectStateGain.loadJSONData({
             niceName: "/track/" + i,
@@ -783,172 +792,177 @@ function deleteCVs() {
 }
 
 //* Create a new preset */
-function createNewPreset() {if(local.parameters.manageCues.recMode.get() == true){
-  cuesNames = local.parameters.manageCues.newCue_sName.get();
-//  listOfCues = root.states.cues.processors.getItems();
-  listOfCues = root.states.cues.processors.conductor.processors.getItems();
-  cueName;
-  cuesLength;
-//  cueTrigger = root.states.cues.processors.addItem("Action");
-  cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
-  script.log(
-    "createNewPreset Triggered!!  CuesNames ==" +
-      cuesNames +
-      "listOfCues ==" +
-      JSON.stringify(listOfCues[0].name)
-  );
-  cVsIDs = [];
-  cVs = root.customVariables.getItems();
-  for (var j = 0; j < cVs.length; j++) {
-    cVsIDs.push(parseInt(cVs[j].name.split("_")[2]));
-  }
-  maxID = cVsIDs[0];
-  for (i = 1; i < cVsIDs.length; ++i) {
-    if (cVsIDs[i] > maxID) {
-      maxID = cVsIDs[i];
+function createNewPreset() {
+  if (local.parameters.manageCues.recMode.get() == true) {
+    cuesNames = local.parameters.manageCues.newCue_sName.get();
+    //  listOfCues = root.states.cues.processors.getItems();
+    listOfCues = root.states.cues.processors.conductor.processors.getItems();
+    cueName;
+    cuesLength;
+    //  cueTrigger = root.states.cues.processors.addItem("Action");
+    cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
+    script.log(
+      "createNewPreset Triggered!!  CuesNames ==" +
+        cuesNames +
+        "listOfCues ==" +
+        JSON.stringify(listOfCues[0].name)
+    );
+    cVsIDs = [];
+    cVs = root.customVariables.getItems();
+    script.log("custom variables array : ", cVs);
+    for (var j = 0; j < cVs.length; j++) {
+      cVsIDs.push(parseInt(cVs[j].name.split("_")[2]));
     }
-  }
-  script.log("cVs Max ID : " + maxID);
-
-  for (i = 0; i < maxID + 1; i++) {
-    if (cVsIDs.contains(i)) {
-      cuesLength = root.customVariables
-        .getItemWithName("_track_" + i)
-        .presets.getItems().length;
-      iCV = root.customVariables
-        .getItemWithName("_track_" + i)
-        .presets.addItem("String");
-
-      if (cuesNames !== "") {
-        if (listOfCues[listOfCues.length - 1].name !== cuesNames) {
-          cueName = cuesNames;
-          iCV.setName(cuesNames);
-        } else {
-          cueName = cuesNames + 1;
-          iCV.setName(cueName);
-          local.parameters.manageCues.newCue_sName.set(cueName);
-        }
-      } else {
-        cueName = "Cue" + (cuesLength + 1);
-        iCV.setName("Cue" + (cuesLength + 1));
+    maxID = cVsIDs[0];
+    for (i = 1; i < cVsIDs.length; ++i) {
+      if (cVsIDs[i] > maxID) {
+        maxID = cVsIDs[i];
       }
-
-    //  cueTrigger.setName(cueName);
-      cueAdded.setName(cueName);
-
-      actionName = "/_track_" + i + "/presets/" + cueName;
-      //**Add a Trigger to load created preset
-      triggerConsequence = root.states.cues.processors.conductor.processors
-        .getItemWithName(cueName)
-        .consequencesTRUE.addItem("Consequence");
-      triggerConsequence.loadJSONData({
-        niceName: "track " + i,
-        type: "Consequence",
-        commandModule: "customVariables",
-        commandPath: "",
-        commandType: "Go to preset",
-        command: {
-          parameters: [
-            {
-              value: "/_track_" + i + "/presets/" + cueName,
-              controlAddress: "/targetPreset",
-            },
-            {
-              value: 5.0,
-              controlAddress: "/interpolationTime",
-              enabled: true,
-            },
-          ],
-          containers: {
-            interpolationCurve: {
-              parameters: [
-                {
-                  value: 1.0,
-                  controlAddress: "/length",
-                },
-                {
-                  value: [0.0, 1.0],
-                  controlAddress: "/viewValueRange",
-                },
-                {
-                  value: [0.0, 1.0],
-                  controlAddress: "/range",
-                  enabled: true,
-                },
-                {
-                  value: false,
-                  controlAddress: "/enabled",
-                },
-              ],
-              editorIsCollapsed: true,
-              hideInRemoteControl: false,
-              items: [
-                {
-                  parameters: [
-                    {
-                      value: "Bezier",
-                      controlAddress: "/easingType",
-                    },
-                  ],
-                  niceName: "Key",
-                  containers: {
-                    easing: {
-                      parameters: [
-                        {
-                          value: [0.300000011920929, 0.0],
-                          controlAddress: "/anchor1",
-                        },
-                        {
-                          value: [-0.300000011920929, 0.0],
-                          controlAddress: "/anchor2",
-                        },
-                      ],
-                    },
-                  },
-                  type: "Key",
-                },
-                {
-                  parameters: [
-                    {
-                      value: 1.0,
-                      controlAddress: "/position",
-                    },
-                    {
-                      value: 1.0,
-                      controlAddress: "/value",
-                    },
-                    {
-                      value: "Bezier",
-                      controlAddress: "/easingType",
-                    },
-                  ],
-                  niceName: "Key 1",
-                  containers: {
-                    easing: {},
-                  },
-                  type: "Key",
-                },
-              ],
-              viewOffset: [0, 0],
-              viewZoom: 1.0,
-              owned: true,
-              niceName: "Interpolation Curve",
-            },
-          },
-          paramLinks: {},
-        },
-      });
     }
-  }
-  triggerManual = root.states.cues.processors.conductor.processors
-    .getItemWithName(cueName)
-    .conditions.addItem("Manual");
+    script.log("customVariables Max ID : " + maxID);
 
-  //script.log("  list of existing Cues: " + listOfCues);
-  if (listOfCues[listOfCues.length - 1].name !== cueName) {
-    local.parameters.manageCues.selectCue.addOption(cueName, cueName);
+    for (i = 0; i < maxID + 1; i++) {
+      if (cVsIDs.contains(i)) {
+        cuesLength = root.customVariables
+          .getItemWithName("_track_" + i)
+          .presets.getItems().length;
+        iCV = root.customVariables
+          .getItemWithName("_track_" + i)
+          .presets.addItem("String");
+
+        if (cuesNames !== "") {
+          if (listOfCues[listOfCues.length - 1].name !== cuesNames) {
+            cueName = cuesNames;
+            iCV.setName(cuesNames);
+          } else {
+            cueName = cuesNames + 1;
+            iCV.setName(cueName);
+            local.parameters.manageCues.newCue_sName.set(cueName);
+          }
+        } else {
+          cueName = "Cue" + (cuesLength + 1);
+          iCV.setName("Cue" + (cuesLength + 1));
+        }
+
+        //  cueTrigger.setName(cueName);
+        cueAdded.setName(cueName);
+
+        actionName = "/_track_" + i + "/presets/" + cueName;
+        //**Add a Trigger to load created preset
+        triggerConsequence = root.states.cues.processors.conductor.processors
+          .getItemWithName(cueName)
+          .consequencesTRUE.addItem("Consequence");
+        triggerConsequence.loadJSONData({
+          niceName: "track " + i,
+          type: "Consequence",
+          commandModule: "customVariables",
+          commandPath: "",
+          commandType: "Go to preset",
+          command: {
+            parameters: [
+              {
+                value: "/_track_" + i + "/presets/" + cueName,
+                controlAddress: "/targetPreset",
+              },
+              {
+                value: 5.0,
+                controlAddress: "/interpolationTime",
+                enabled: true,
+              },
+            ],
+            containers: {
+              interpolationCurve: {
+                parameters: [
+                  {
+                    value: 1.0,
+                    controlAddress: "/length",
+                  },
+                  {
+                    value: [0.0, 1.0],
+                    controlAddress: "/viewValueRange",
+                  },
+                  {
+                    value: [0.0, 1.0],
+                    controlAddress: "/range",
+                    enabled: true,
+                  },
+                  {
+                    value: false,
+                    controlAddress: "/enabled",
+                  },
+                ],
+                editorIsCollapsed: true,
+                hideInRemoteControl: false,
+                items: [
+                  {
+                    parameters: [
+                      {
+                        value: "Bezier",
+                        controlAddress: "/easingType",
+                      },
+                    ],
+                    niceName: "Key",
+                    containers: {
+                      easing: {
+                        parameters: [
+                          {
+                            value: [0.300000011920929, 0.0],
+                            controlAddress: "/anchor1",
+                          },
+                          {
+                            value: [-0.300000011920929, 0.0],
+                            controlAddress: "/anchor2",
+                          },
+                        ],
+                      },
+                    },
+                    type: "Key",
+                  },
+                  {
+                    parameters: [
+                      {
+                        value: 1.0,
+                        controlAddress: "/position",
+                      },
+                      {
+                        value: 1.0,
+                        controlAddress: "/value",
+                      },
+                      {
+                        value: "Bezier",
+                        controlAddress: "/easingType",
+                      },
+                    ],
+                    niceName: "Key 1",
+                    containers: {
+                      easing: {},
+                    },
+                    type: "Key",
+                  },
+                ],
+                viewOffset: [0, 0],
+                viewZoom: 1.0,
+                owned: true,
+                niceName: "Interpolation Curve",
+              },
+            },
+            paramLinks: {},
+          },
+        });
+      }
+    }
+    triggerManual = root.states.cues.processors.conductor.processors
+      .getItemWithName(cueName)
+      .conditions.addItem("Manual");
+
+    //script.log("  list of existing Cues: " + listOfCues);
+    if (listOfCues[listOfCues.length - 1].name !== cueName) {
+      local.parameters.manageCues.selectCue.addOption(cueName, cueName);
+    }
+  }else{
+    util.showOkCancelBox("enableRecMode", "Rec Mode not Enabled!", "If you want to record a cue, enable record mode before!", "warning", "Do it!","Cancel");
   }
-}}
+}
 
 //**
 //* Callback functions for module commands
@@ -956,9 +970,6 @@ function createNewPreset() {if(local.parameters.manageCues.recMode.get() == true
 
 /**
  * aed	: Send spheric coordinate of sound location.
- * 1 int [1, 128] object index
- * 2 Point3D [a, e, d] [[-180, -90, 0],[180, 90, 1]]
- *
  * example : /track/4/aed -22.5 12.7 0.9
  */
 function aed(sourceIndex, aed) {
@@ -1015,7 +1026,7 @@ function getGain(sourceIndex) {
   local.send("/get", "/track/" + sourceIndex + "/gain");
 }
 
-//**Function to link module Values to corresponding CVs
+//! **Function to link module Values to corresponding CVs
 function createParamReferenceTo(toValue, fromParam) {
   script.log(
     "Create Reference  from param : " + fromParam + " to value of : " + toValue
@@ -1076,8 +1087,9 @@ function getDeclaredTracks() {
     }
     script.log(" tracks list case 2 : " + JSON.stringify(declaredTracks));
   } else {
-    declaredTracks[parseInt(tracksIDsDeclaration)] =
-      parseInt(tracksIDsDeclaration);
+    declaredTracks[parseInt(tracksIDsDeclaration)] = parseInt(
+      tracksIDsDeclaration
+    );
     script.log(" tracks list case 3 : " + JSON.stringify(declaredTracks));
   }
 }
@@ -1120,3 +1132,16 @@ function updateTracksList() {
 //if (local.values.tracksParameters.xyz) {
 //  updateTracksList();
 //}
+
+//! MessageBoxes Callbacks Function
+
+function messageBoxCallback(id, result) {
+  if (id == "enableRecMode"){
+    if(result == true){
+      local.parameters.manageCues.recMode.set(true);
+    }
+  }
+  script.log("Message box callback : "+id+" > "+result); }
+
+
+  root.customVariables._track_2.presets.cue1.defaultLoadTime
