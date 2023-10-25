@@ -26,6 +26,7 @@ var requestSendRate; //in milliseconds
 var option = "initial";
 var recMode = local.parameters.manageCues.recMode.get();
 
+
 /**
  * Module initialization
  */
@@ -165,6 +166,7 @@ function init() {
   //xyzORaed = root.states.transitions.addItem("Action");
   //xyzORaed.sourceState = "xyzOutputs";
   //xyzORaed.desState = "aedOutputs";
+  root.states.addTransition("xyzOutputs", "aedOutputs");
   local.parameters.manageCues.recMode.set(1);
   //populateCueList();
   updateTracksList();
@@ -203,11 +205,20 @@ function moduleParameterChanged(param) {
       script.log("recMode changed to : " + recMode);
       if (recMode == 0) {
         local.parameters.oscInput.enabled.set(false);
-        root.states.xyzOutputs.active.set(true);
-        root.states.aedOutputs.active.set(true);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly",false);
+        //local.parameters.manageCues.coordMode.setData("opt1");
+        //root.states.xyzOutputs.active.set(true);
+        //root.states.aedOutputs.active.set(true);
         root.states.gainOutputs.active.set(true);
+        script.log("coord mode is set to:",local.parameters.manageCues.coordMode.get());
+        if(local.parameters.manageCues.coordMode.get() =="opt1"){
+          root.states.aedOutputs.active.set(true);
+        }else{
+          root.states.xyzOutputs.active.set(true);
+        }
       } else {
         local.parameters.oscInput.enabled.set(true);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly",true);
         root.states.xyzOutputs.active.set(false);
         root.states.aedOutputs.active.set(false);
         root.states.gainOutputs.active.set(false);
@@ -219,6 +230,14 @@ function moduleParameterChanged(param) {
       getTracksValues = param.get();
     }
   }
+  if (param.is(local.parameters.manageCues.coordMode)) {
+    coordMode = local.parameters.manageCues.coordMode.get();
+    if (coordMode == "opt1"){
+      root.states.aedOutputs.active.set(true);
+        }else{
+          root.states.xyzOutputs.active.set(true);
+        }
+    }
 
   if (param.is(local.parameters.manageCues.createCue)) {
     script.log("createNewPreset Triggered!!");
@@ -258,8 +277,7 @@ function moduleParameterChanged(param) {
     root.states.cues.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
-      root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions
-        .manual.active;
+      root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions.manual.active;
     script.log("Manual action = " + manualAction);
     manualAction.set(1);
     manualAction.set(0);
@@ -815,6 +833,7 @@ function createNewPreset() {
         cueName = "Cue" + (cuesLength + 1);
         iCV.setName("Cue" + (cuesLength + 1));
       }
+
     //  cueTrigger.setName(cueName);
       cueAdded.setName(cueName);
 

@@ -2,7 +2,7 @@
 	"name": "Holophonix",
 	"type": "OSC",
 	"path": "Spatial Audio",
-	"version": "1.3",
+	"version": "1.4",
 	"description": "Module to interact with Holophonix spatial audio processor. Main purpose is to create Cues(or scenes) of tracks 3D positions(XYZ or AED) and Gains to reload them similar a lighting Cues logic.\n\n Chataigne Module specific documentation can be found in the README on GitHub: ",
 	"url": "https://github.com/dewiweb/Holophonix_chataigne_module",
 	"downloadURL": "https://github.com/dewiweb/Holophonix-chataigne-module/archive/refs/heads/main.zip",
@@ -71,6 +71,12 @@
 				"description": "ON : record position from Holo.\n\n OFF : send recorded positions to Holo.\n",
 				"type": "Boolean",
 				"default": true
+			},
+			"Coord Mode": {
+				"description":"not applicable in Rec Mode!! Choose the coordinate system applicable for OSC outputs",
+				"type":"Enum",
+				"options": {"AED":"opt1", "XYZ":"opt2"},
+				"readOnly": true
 			},
 			"New Cue's Name": {
 				"description": "Set a specific Name (Default = Cue)",
