@@ -26,6 +26,7 @@ var requestSendRate; //in milliseconds
 var option = "initial";
 var recMode = local.parameters.manageCues.recMode.get();
 
+
 /**
  * Module initialization
  */
@@ -39,6 +40,9 @@ function init() {
   // Module GUI settings
   local.scripts.setCollapsed(true);
   //Add States to state machine
+  if (root.states.getChild("XYZ Outputs") == undefined) {
+    xyzOutputs = root.states.addItem();
+    xyzOutputs.loadJSONData({
   if (root.states.getChild("XYZ Outputs") == undefined) {
     xyzOutputs = root.states.addItem();
     xyzOutputs.loadJSONData({
@@ -59,6 +63,7 @@ function init() {
         },
       ],
       niceName: "XYZ Outputs",
+      niceName: "XYZ Outputs",
       type: "State",
       processors: {
         viewOffset: [0, 0],
@@ -67,8 +72,12 @@ function init() {
     });
   } else {
     root.states.getChild("XYZ Outputs").active.set(0);
+    root.states.getChild("XYZ Outputs").active.set(0);
   }
 
+  if (root.states.getChild("AED Outputs") == undefined) {
+    aedOutputs = root.states.addItem();
+    aedOutputs.loadJSONData({
   if (root.states.getChild("AED Outputs") == undefined) {
     aedOutputs = root.states.addItem();
     aedOutputs.loadJSONData({
@@ -89,6 +98,7 @@ function init() {
         },
       ],
       niceName: "AED Outputs",
+      niceName: "AED Outputs",
       type: "State",
       processors: {
         viewOffset: [0, 0],
@@ -97,8 +107,12 @@ function init() {
     });
   } else {
     root.states.getChild("AED Outputs").active.set(0);
+    root.states.getChild("AED Outputs").active.set(0);
   }
 
+  if (root.states.getChild("Gain Outputs") == undefined) {
+    gainOutputs = root.states.addItem();
+    gainOutputs.loadJSONData({
   if (root.states.getChild("Gain Outputs") == undefined) {
     gainOutputs = root.states.addItem();
     gainOutputs.loadJSONData({
@@ -119,6 +133,7 @@ function init() {
         },
       ],
       niceName: "Gain Outputs",
+      niceName: "Gain Outputs",
       type: "State",
       processors: {
         viewOffset: [0, 0],
@@ -127,8 +142,12 @@ function init() {
     });
   } else {
     root.states.getChild("Gain Outputs").active.set(0);
+    root.states.getChild("Gain Outputs").active.set(0);
   }
 
+  if (root.states.getChild("Cues") == undefined) {
+    cues = root.states.addItem();
+    cues.loadJSONData({
   if (root.states.getChild("Cues") == undefined) {
     cues = root.states.addItem();
     cues.loadJSONData({
@@ -153,6 +172,7 @@ function init() {
         },
       ],
       niceName: "Cues",
+      niceName: "Cues",
       type: "State",
       processors: {
         viewOffset: [0, 0],
@@ -160,11 +180,13 @@ function init() {
       },
     });
     cuesConductor = root.states.cues.processors.addItem("Conductor");
+    cuesConductor = root.states.cues.processors.addItem("Conductor");
   }
   //NEXT LINE MAKES CHATAIGNE CRASH!
   //xyzORaed = root.states.transitions.addItem("Action");
   //xyzORaed.sourceState = "xyzOutputs";
   //xyzORaed.desState = "aedOutputs";
+  root.states.addTransition("xyzOutputs", "aedOutputs");
   local.parameters.manageCues.recMode.set(1);
   //populateCueList();
   updateTracksList();
@@ -172,9 +194,12 @@ function init() {
 
 function populateCueList() {
   if (root.states.getChild("Cues")) {
+  if (root.states.getChild("Cues")) {
     if (
       root.modules.holophonix.parameters.manageCues.selectCue.get() == undefined
     ) {
+      cueListState = root.states.getChild("Cues");
+      cueList = cueListState.processors.conductor.processors.getItems();
       cueListState = root.states.getChild("Cues");
       cueList = cueListState.processors.conductor.processors.getItems();
       for (i = 0; i < cueList.length; i++) {
@@ -203,11 +228,20 @@ function moduleParameterChanged(param) {
       script.log("recMode changed to : " + recMode);
       if (recMode == 0) {
         local.parameters.oscInput.enabled.set(false);
-        root.states.xyzOutputs.active.set(true);
-        root.states.aedOutputs.active.set(true);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly",false);
+        //local.parameters.manageCues.coordMode.setData("opt1");
+        //root.states.xyzOutputs.active.set(true);
+        //root.states.aedOutputs.active.set(true);
         root.states.gainOutputs.active.set(true);
+        script.log("coord mode is set to:",local.parameters.manageCues.coordMode.get());
+        if(local.parameters.manageCues.coordMode.get() =="opt1"){
+          root.states.aedOutputs.active.set(true);
+        }else{
+          root.states.xyzOutputs.active.set(true);
+        }
       } else {
         local.parameters.oscInput.enabled.set(true);
+        local.parameters.manageCues.coordMode.setAttribute("readOnly",true);
         root.states.xyzOutputs.active.set(false);
         root.states.aedOutputs.active.set(false);
         root.states.gainOutputs.active.set(false);
@@ -219,6 +253,14 @@ function moduleParameterChanged(param) {
       getTracksValues = param.get();
     }
   }
+  if (param.is(local.parameters.manageCues.coordMode)) {
+    coordMode = local.parameters.manageCues.coordMode.get();
+    if (coordMode == "opt1"){
+      root.states.aedOutputs.active.set(true);
+        }else{
+          root.states.xyzOutputs.active.set(true);
+        }
+    }
 
   if (param.is(local.parameters.manageCues.createCue)) {
     script.log("createNewPreset Triggered!!");
@@ -256,8 +298,10 @@ function moduleParameterChanged(param) {
   }
   if (param.name == "reloadCue") {
     root.states.cues.active.set(1);
+    root.states.cues.active.set(1);
     cueToReload = local.parameters.manageCues.selectCue.get();
     manualAction =
+      root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions
       root.states.cues.processors.conductor.processors.getItemWithName(cueToReload).conditions
         .manual.active;
     script.log("Manual action = " + manualAction);
@@ -267,6 +311,7 @@ function moduleParameterChanged(param) {
   if (param.name == "deleteCue") {
     cueToDelete = local.parameters.manageCues.selectCue.get();
     //script.log("Cue to delete : " + cueToDelete);
+    toDelete = root.states.cues.processors.conductor.processors.getItemWithName(cueToDelete);
     toDelete = root.states.cues.processors.conductor.processors.getItemWithName(cueToDelete);
     allCues = local.parameters.manageCues.selectCue.getAllOptions();
     //script.log("all options : " + JSON.stringify(allCues));
@@ -283,6 +328,7 @@ function moduleParameterChanged(param) {
     }
 
     root.states.cues.processors.conductor.processors.removeItem(toDelete);
+    root.states.cues.processors.conductor.processors.removeItem(toDelete);
 
     cVs = root.customVariables.getItems();
     for (var j = 0; j < cVs.length; j++) {
@@ -298,6 +344,9 @@ function moduleParameterChanged(param) {
       if (cVs[j].presets.getItemWithName(cueToUpdate) !== undefined) {
         cVs[j].presets.getItemWithName(cueToUpdate).update.trigger();
         //cVs[j].presets.getItemWithName(cueToUpdate).update = 0;
+      }
+      else{
+        //ToDo: populate track's preset with cue's name if track didn't exist before! 
       }
       else{
         //ToDo: populate track's preset with cue's name if track didn't exist before! 
@@ -414,6 +463,9 @@ function update() {
     if (reinitialize == 0) {
       local.parameters.manageCues.recMode.set(1);
       local.parameters.oscInput.enabled.set(true);
+      root.states.xyzOutputs.active.set(false);
+      root.states.aedOutputs.active.set(false);
+      root.states.gainOutputs.active.set(false);
       root.states.xyzOutputs.active.set(false);
       root.states.aedOutputs.active.set(false);
       root.states.gainOutputs.active.set(false);
@@ -541,6 +593,7 @@ function createCV(option) {
           );
           //** Add corresponding mappings to states * /
           ObjectStateXYZ = root.states.xyzOutputs.processors.addItem("Mapping");
+          ObjectStateXYZ = root.states.xyzOutputs.processors.addItem("Mapping");
           ObjectStateXYZ.setName("/track/" + i);
           ObjectStateXYZ.loadJSONData({
             niceName: "/track/" + i,
@@ -611,6 +664,7 @@ function createCV(option) {
             "/modules/holophonix/values/tracksParameters/aed/" + i,
             "/customVariables/_track_" + i + "/variables/_aed/_aed"
           );
+          ObjectStateAED = root.states.aedOutputs.processors.addItem("Mapping");
           ObjectStateAED = root.states.aedOutputs.processors.addItem("Mapping");
           ObjectStateAED.setName("/track/" + i);
           ObjectStateAED.loadJSONData({
@@ -683,6 +737,7 @@ function createCV(option) {
             "/customVariables/_track_" + i + "/variables/_gain/_gain"
           );
           ObjectStateGain =
+            root.states.gainOutputs.processors.addItem("Mapping");
             root.states.gainOutputs.processors.addItem("Mapping");
           ObjectStateGain.setName("/track/" + i);
           ObjectStateGain.loadJSONData({
@@ -761,6 +816,9 @@ function deleteCVs() {
       root.states.xyzOutputs.processors.removeItem("/track/" + i);
       root.states.aedOutputs.processors.removeItem("/track/" + i);
       root.states.gainOutputs.processors.removeItem("/track/" + i);
+      root.states.xyzOutputs.processors.removeItem("/track/" + i);
+      root.states.aedOutputs.processors.removeItem("/track/" + i);
+      root.states.gainOutputs.processors.removeItem("/track/" + i);
     }
   }
 }
@@ -770,8 +828,12 @@ function createNewPreset() {
   cuesNames = local.parameters.manageCues.newCue_sName.get();
 //  listOfCues = root.states.cues.processors.getItems();
   listOfCues = root.states.cues.processors.conductor.processors.getItems();
+//  listOfCues = root.states.cues.processors.getItems();
+  listOfCues = root.states.cues.processors.conductor.processors.getItems();
   cueName;
   cuesLength;
+//  cueTrigger = root.states.cues.processors.addItem("Action");
+  cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
 //  cueTrigger = root.states.cues.processors.addItem("Action");
   cueAdded = root.states.cues.processors.conductor.processors.addItem("Cue");
   script.log(
@@ -818,8 +880,12 @@ function createNewPreset() {
     //  cueTrigger.setName(cueName);
       cueAdded.setName(cueName);
 
+    //  cueTrigger.setName(cueName);
+      cueAdded.setName(cueName);
+
       actionName = "/_track_" + i + "/presets/" + cueName;
       //**Add a Trigger to load created preset
+      triggerConsequence = root.states.cues.processors.conductor.processors
       triggerConsequence = root.states.cues.processors.conductor.processors
         .getItemWithName(cueName)
         .consequencesTRUE.addItem("Consequence");
@@ -922,6 +988,7 @@ function createNewPreset() {
       });
     }
   }
+  triggerManual = root.states.cues.processors.conductor.processors
   triggerManual = root.states.cues.processors.conductor.processors
     .getItemWithName(cueName)
     .conditions.addItem("Manual");
