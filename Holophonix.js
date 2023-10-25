@@ -1142,6 +1142,3 @@ function messageBoxCallback(id, result) {
     }
   }
   script.log("Message box callback : "+id+" > "+result); }
-
-
-  root.customVariables._track_2.presets.cue1.defaultLoadTime
