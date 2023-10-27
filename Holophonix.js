@@ -965,6 +965,10 @@ function aed(sourceIndex, aed) {
   local.send("/track/" + sourceIndex + "/aed", aed[0], aed[1], aed[2]);
 }
 
+function azim(sourceIndex, azim) {
+  local.send("/track/" + sourceIndex + "/azim", azim);
+}
+
 /**
  * xyz	: Send (x,y,z) position of sound object.
  * 1 int [1, 128] object index

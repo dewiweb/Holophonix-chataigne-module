@@ -152,6 +152,22 @@
 				}
 			}
 		},
+		"Send azim": {
+			"menu": "Set tracks",
+			"callback": "azim",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"azim": {
+					"type": "Float",
+					"min": -180,
+					"max": 180
+				}
+			}
+		},
 		"Send gain": {
 			"menu": "Set tracks",
 			"callback": "gain",
